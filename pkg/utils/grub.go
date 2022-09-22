@@ -44,6 +44,11 @@ func NewGrub(config *v1.Config) *Grub {
 func (g Grub) Install(target, rootDir, bootDir, grubConf, tty string, efi bool, stateLabel string) (err error) { // nolint:gocyclo
 	var grubargs []string
 	var grubdir, finalContent string
+
+	// At this point the active mountpoint has all the data from the installation source, so we should be able to use
+	// the grub.cfg bundled in there
+	systemgrub := "grub2"
+
 	// only install grub on non-efi systems
 	if !efi {
 		g.config.Logger.Info("Installing GRUB..")
@@ -62,18 +67,12 @@ func (g Grub) Install(target, rootDir, bootDir, grubConf, tty string, efi bool, 
 			return err
 		}
 		g.config.Logger.Infof("Grub install to device %s complete", target)
-	}
 
-	// At this point the active mountpoint has all the data from the installation source, so we should be able to use
-	// the grub.cfg bundled in there
-	systemgrub := "/boot/grub2"
-
-	// Select the proper dir for grub
-	if ok, _ := IsDir(g.config.Fs,  filepath.Join(bootDir, "grub")); ok {
-		systemgrub = "grub"
-	}
-	if ok, _ := IsDir(g.config.Fs, filepath.Join(bootDir, "grub2")); ok {
-		systemgrub = "grub2"
+		// Select the proper dir for grub - this assumes that we previously run a grub install command, which is not the case in EFI
+		// In the EFI case we default to grub2
+		if ok, _ := IsDir(g.config.Fs, filepath.Join(bootDir, "grub")); ok {
+			systemgrub = "grub"
+		}
 	}
 
 	grubdir = filepath.Join(rootDir, grubConf)
@@ -86,12 +85,12 @@ func (g Grub) Install(target, rootDir, bootDir, grubConf, tty string, efi bool, 
 	}
 
 	// Create Needed dir under state partition to store the grub.cfg and any needed modules
-	err = MkdirAll(g.config.Fs, filepath.Join(bootDir, fmt.Sprintf("%s/%s-efi",systemgrub, g.config.Arch)), cnst.DirPerm)
+	err = MkdirAll(g.config.Fs, filepath.Join(bootDir, fmt.Sprintf("%s/%s-efi", systemgrub, g.config.Arch)), cnst.DirPerm)
 	if err != nil {
 		return fmt.Errorf("error creating grub dir: %s", err)
 	}
 
-	grubConfTarget, err := g.config.Fs.Create(filepath.Join(bootDir, fmt.Sprintf("%s/grub.cfg",systemgrub)))
+	grubConfTarget, err := g.config.Fs.Create(filepath.Join(bootDir, fmt.Sprintf("%s/grub.cfg", systemgrub)))
 	if err != nil {
 		return err
 	}
@@ -120,7 +119,7 @@ func (g Grub) Install(target, rootDir, bootDir, grubConf, tty string, efi bool, 
 		finalContent = string(grubCfg)
 	}
 
-	g.config.Logger.Infof("Copying grub contents from %s to %s", grubdir, filepath.Join(bootDir, "grub2/grub.cfg"))
+	g.config.Logger.Infof("Copying grub contents from %s to %s", grubdir, filepath.Join(bootDir, fmt.Sprintf("%s/grub.cfg", systemgrub)))
 	_, err = grubConfTarget.WriteString(finalContent)
 	if err != nil {
 		return err
@@ -140,7 +139,7 @@ func (g Grub) Install(target, rootDir, bootDir, grubConf, tty string, efi bool, 
 					return err
 				}
 				if d.Name() == m && strings.Contains(path, g.config.Arch) {
-					fileWriteName := filepath.Join(bootDir, fmt.Sprintf("grub2/%s-efi/%s", g.config.Arch, m))
+					fileWriteName := filepath.Join(bootDir, fmt.Sprintf("%s/%s-efi/%s", systemgrub, g.config.Arch, m))
 					g.config.Logger.Debugf("Copying %s to %s", path, fileWriteName)
 					fileContent, err := g.config.Fs.ReadFile(path)
 					if err != nil {
@@ -259,7 +258,7 @@ func (g Grub) Install(target, rootDir, bootDir, grubConf, tty string, efi bool, 
 		// Add grub.cfg in EFI that chainloads the grub.cfg in recovery
 		// Notice that we set the config to /grub2/grub.cfg which means the above we need to copy the file from
 		// the installation source into that dir
-		grubCfgContent := []byte(fmt.Sprintf("search --no-floppy --label --set=root %s\nset prefix=($root)/grub2\nconfigfile ($root)/grub2/grub.cfg", stateLabel))
+		grubCfgContent := []byte(fmt.Sprintf("search --no-floppy --label --set=root %s\nset prefix=($root)/%s\nconfigfile ($root)/%s/grub.cfg", stateLabel, systemgrub, systemgrub))
 		err = g.config.Fs.WriteFile(filepath.Join(cnst.EfiDir, "EFI/boot/grub.cfg"), grubCfgContent, cnst.FilePerm)
 		if err != nil {
 			return fmt.Errorf("error writing %s: %s", filepath.Join(cnst.EfiDir, "EFI/boot/grub.cfg"), err)
