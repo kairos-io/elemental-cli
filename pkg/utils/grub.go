@@ -66,6 +66,16 @@ func (g Grub) Install(target, rootDir, bootDir, grubConf, tty string, efi bool, 
 
 	// At this point the active mountpoint has all the data from the installation source, so we should be able to use
 	// the grub.cfg bundled in there
+	systemgrub := "/boot/grub2"
+
+	// Select the proper dir for grub
+	if ok, _ := IsDir(g.config.Fs,  filepath.Join(bootDir, "grub")); ok {
+		systemgrub = "grub"
+	}
+	if ok, _ := IsDir(g.config.Fs, filepath.Join(bootDir, "grub2")); ok {
+		systemgrub = "grub2"
+	}
+
 	grubdir = filepath.Join(rootDir, grubConf)
 	g.config.Logger.Infof("Using grub config dir %s", grubdir)
 
@@ -76,12 +86,12 @@ func (g Grub) Install(target, rootDir, bootDir, grubConf, tty string, efi bool, 
 	}
 
 	// Create Needed dir under state partition to store the grub.cfg and any needed modules
-	err = MkdirAll(g.config.Fs, filepath.Join(bootDir, fmt.Sprintf("grub2/%s-efi", g.config.Arch)), cnst.DirPerm)
+	err = MkdirAll(g.config.Fs, filepath.Join(bootDir, fmt.Sprintf("%s/%s-efi",systemgrub, g.config.Arch)), cnst.DirPerm)
 	if err != nil {
 		return fmt.Errorf("error creating grub dir: %s", err)
 	}
 
-	grubConfTarget, err := g.config.Fs.Create(filepath.Join(bootDir, "grub2/grub.cfg"))
+	grubConfTarget, err := g.config.Fs.Create(filepath.Join(bootDir, fmt.Sprintf("%s/grub.cfg",systemgrub)))
 	if err != nil {
 		return err
 	}
