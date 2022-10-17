@@ -17,7 +17,7 @@ require (
 	github.com/mitchellh/mapstructure v1.4.3
 	github.com/mudler/go-pluggable v0.0.0-20211206135551-9263b05c562e
 	github.com/mudler/luet v0.0.0-20220526130937-264bf53fe7ab
-	github.com/mudler/yip v0.0.0-20220905202553-f9b5cdd6a56e
+	github.com/mudler/yip v0.11.2
 	github.com/onsi/ginkgo/v2 v2.1.4
 	github.com/onsi/gomega v1.20.1
 	github.com/sanity-io/litter v1.5.5
@@ -27,7 +27,10 @@ require (
 	github.com/spf13/viper v1.10.0
 	github.com/twpayne/go-vfs v1.7.2
 	github.com/zloylos/grsync v1.6.1
-	golang.org/x/tools v0.1.12 // indirect
+	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
+	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect
+	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
+	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/mount-utils v0.23.0
 )
