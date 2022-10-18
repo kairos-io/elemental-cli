@@ -17,7 +17,7 @@ require (
 	github.com/mitchellh/mapstructure v1.4.3
 	github.com/mudler/go-pluggable v0.0.0-20211206135551-9263b05c562e
 	github.com/mudler/luet v0.0.0-20221018082252-2513760b00de
-	github.com/mudler/yip v0.11.2
+	github.com/mudler/yip v0.11.3
 	github.com/onsi/ginkgo/v2 v2.3.1
 	github.com/onsi/gomega v1.22.0
 	github.com/philopon/go-toposort v0.0.0-20170620085441-9be86dbd762f // indirect

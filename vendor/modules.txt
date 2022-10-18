@@ -557,7 +557,7 @@ github.com/mudler/luet/pkg/tree
 github.com/mudler/luet/pkg/versioner
 # github.com/mudler/topsort v0.0.0-20201103161459-db5c7901c290
 github.com/mudler/topsort
-# github.com/mudler/yip v0.11.2
+# github.com/mudler/yip v0.11.3
 ## explicit
 github.com/mudler/yip/pkg/executor
 github.com/mudler/yip/pkg/logger
