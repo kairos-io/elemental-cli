@@ -22,6 +22,8 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/mudler/luet/pkg/api/core/types"
 	box "github.com/mudler/luet/pkg/box"
+	fileHelper "github.com/mudler/luet/pkg/helpers/file"
+	"github.com/mudler/luet/pkg/tree"
 
 	"github.com/pkg/errors"
 )
@@ -89,4 +91,53 @@ func NewLuetFinalizerFromYaml(data []byte) (*LuetFinalizer, error) {
 		return &p, err
 	}
 	return &p, err
+}
+
+func OrderFinalizers(allRepos types.PackageDatabase, toInstall map[string]ArtifactMatch, solution types.PackagesAssertions) ([]*types.Package, error) {
+	var toFinalize []*types.Package
+
+	populate := func(ordered types.PackagesAssertions) error {
+		for _, ass := range ordered {
+			if ass.Value {
+				installed, ok := toInstall[ass.Package.GetFingerPrint()]
+				if !ok {
+					// It was a dep already installed in the system, so we can skip it safely
+					continue
+				}
+				treePackage, err := installed.Repository.GetTree().GetDatabase().FindPackage(ass.Package)
+				if err != nil {
+					return errors.Wrap(err, "Error getting package "+ass.Package.HumanReadableString())
+				}
+
+				toFinalize = append(toFinalize, treePackage)
+			}
+		}
+		return nil
+	}
+
+	if len(toInstall) == 1 {
+		for _, w := range toInstall {
+			if fileHelper.Exists(w.Package.Rel(tree.FinalizerFile)) {
+				// Finalizers needs to run in order and in sequence.
+				ordered, err := solution.Order(allRepos, w.Package.GetFingerPrint())
+				if err != nil {
+					return toFinalize, errors.Wrap(err, "While order a solution for "+w.Package.HumanReadableString())
+				}
+				if err := populate(ordered); err != nil {
+					return toFinalize, err
+				}
+			}
+		}
+	} else {
+		assertions, err := solution.EnsureOrder(allRepos)
+		if err != nil {
+			return toFinalize, err
+		}
+
+		if err := populate(assertions); err != nil {
+			return toFinalize, err
+		}
+	}
+
+	return toFinalize, nil
 }

@@ -467,6 +467,8 @@ github.com/jmespath/go-jmespath
 # github.com/joho/godotenv v1.4.0
 ## explicit
 github.com/joho/godotenv
+# github.com/kendru/darwin/go/depgraph v0.0.0-20220319173517-8abc3541da93
+github.com/kendru/darwin/go/depgraph
 # github.com/kevinburke/ssh_config v1.2.0
 github.com/kevinburke/ssh_config
 # github.com/klauspost/compress v1.15.1
@@ -529,7 +531,7 @@ github.com/mudler/entities/pkg/entities
 # github.com/mudler/go-pluggable v0.0.0-20211206135551-9263b05c562e
 ## explicit
 github.com/mudler/go-pluggable
-# github.com/mudler/luet v0.0.0-20220526130937-264bf53fe7ab
+# github.com/mudler/luet v0.0.0-20221018082252-2513760b00de
 ## explicit
 github.com/mudler/luet/pkg/api/core/bus
 github.com/mudler/luet/pkg/api/core/config
@@ -563,7 +565,7 @@ github.com/mudler/yip/pkg/plugins
 github.com/mudler/yip/pkg/schema
 github.com/mudler/yip/pkg/schema/cloudinit
 github.com/mudler/yip/pkg/utils
-# github.com/onsi/ginkgo/v2 v2.1.4
+# github.com/onsi/ginkgo/v2 v2.3.1
 ## explicit
 github.com/onsi/ginkgo/v2
 github.com/onsi/ginkgo/v2/config
@@ -575,7 +577,7 @@ github.com/onsi/ginkgo/v2/internal/parallel_support
 github.com/onsi/ginkgo/v2/internal/testingtproxy
 github.com/onsi/ginkgo/v2/reporters
 github.com/onsi/ginkgo/v2/types
-# github.com/onsi/gomega v1.20.1
+# github.com/onsi/gomega v1.22.0
 ## explicit
 github.com/onsi/gomega
 github.com/onsi/gomega/format
@@ -605,7 +607,7 @@ github.com/peterbourgon/diskv
 # github.com/phayes/permbits v0.0.0-20190612203442-39d7c581d2ee
 github.com/phayes/permbits
 # github.com/philopon/go-toposort v0.0.0-20170620085441-9be86dbd762f
-github.com/philopon/go-toposort
+## explicit
 # github.com/pierrec/lz4 v2.6.1+incompatible
 github.com/pierrec/lz4
 github.com/pierrec/lz4/internal/xxh32

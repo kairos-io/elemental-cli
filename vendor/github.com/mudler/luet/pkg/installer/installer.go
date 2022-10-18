@@ -25,10 +25,13 @@ import (
 	"sync"
 
 	"github.com/hashicorp/go-multierror"
+
 	"github.com/mudler/luet/pkg/api/core/config"
 	"github.com/mudler/luet/pkg/api/core/logger"
 	"github.com/mudler/luet/pkg/helpers"
 	"github.com/mudler/luet/pkg/tree"
+
+	"github.com/pterm/pterm"
 
 	"github.com/mudler/luet/pkg/api/core/bus"
 	"github.com/mudler/luet/pkg/api/core/types"
@@ -36,7 +39,6 @@ import (
 	pkg "github.com/mudler/luet/pkg/database"
 	fileHelper "github.com/mudler/luet/pkg/helpers/file"
 	"github.com/mudler/luet/pkg/solver"
-	"github.com/pterm/pterm"
 
 	"github.com/pkg/errors"
 )
@@ -556,6 +558,8 @@ func (l *LuetInstaller) Install(cp types.Packages, s *System) error {
 
 	// Resolvers might decide to remove some packages from being installed
 	if !solver.IsRelaxedResolver(l.Options.SolverOptions) {
+		var packagesNotFound []string
+
 		for _, p := range cp {
 			found := false
 
@@ -577,17 +581,28 @@ func (l *LuetInstaller) Install(cp types.Packages, s *System) error {
 			for _, m := range match {
 				if m.Package.GetName() == p.GetName() {
 					found = true
+					break
 				}
 				for _, pack := range m.Package.GetProvides() {
 					if pack.GetName() == p.GetName() {
 						found = true
+						break
 					}
 				}
 			}
 
 			if !found {
-				return fmt.Errorf("package '%s' not found", p.HumanReadableString())
+				packagesNotFound = append(packagesNotFound, p.HumanReadableString())
 			}
+		}
+
+		if len(packagesNotFound) > 0 {
+			prefix := "package"
+			if len(packagesNotFound) > 1 {
+				prefix = "packages"
+			}
+
+			return fmt.Errorf("%s '%s' not found", prefix, strings.Join(packagesNotFound, "', '"))
 		}
 	}
 
@@ -816,33 +831,7 @@ func (l *LuetInstaller) computeInstall(o Option, syncedRepos Repositories, cp ty
 func (l *LuetInstaller) getFinalizers(allRepos types.PackageDatabase, solution types.PackagesAssertions, toInstall map[string]ArtifactMatch, nodeps bool) ([]*types.Package, error) {
 	var toFinalize []*types.Package
 	if !nodeps {
-		// TODO: Lower those errors as l.Options.Context.Warning
-		for _, w := range toInstall {
-			if !fileHelper.Exists(w.Package.Rel(tree.FinalizerFile)) {
-				continue
-			}
-			// Finalizers needs to run in order and in sequence.
-			ordered, err := solution.Order(allRepos, w.Package.GetFingerPrint())
-			if err != nil {
-				return toFinalize, errors.Wrap(err, "While order a solution for "+w.Package.HumanReadableString())
-			}
-		ORDER:
-			for _, ass := range ordered {
-				if ass.Value {
-					installed, ok := toInstall[ass.Package.GetFingerPrint()]
-					if !ok {
-						// It was a dep already installed in the system, so we can skip it safely
-						continue ORDER
-					}
-					treePackage, err := installed.Repository.GetTree().GetDatabase().FindPackage(ass.Package)
-					if err != nil {
-						return toFinalize, errors.Wrap(err, "Error getting package "+ass.Package.HumanReadableString())
-					}
-
-					toFinalize = append(toFinalize, treePackage)
-				}
-			}
-		}
+		return OrderFinalizers(allRepos, toInstall, solution)
 	} else {
 		for _, c := range toInstall {
 			if !fileHelper.Exists(c.Package.Rel(tree.FinalizerFile)) {
