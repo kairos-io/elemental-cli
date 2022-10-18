@@ -104,10 +104,14 @@ func layoutPlugin(l logger.Interface, s schema.Stage, fs vfs.FS, console plugins
 		if err != nil {
 			return fmt.Errorf("Failed creating partitions: %w", err)
 		}
-		out, err := dev.FormatPartition(partNum, part.FileSystem, part.FSLabel)
-		if err != nil {
-			return fmt.Errorf("Formatting partition failed: %s\nError: %w", out, err)
+
+		if part.FileSystem != "-" {
+			out, err := dev.FormatPartition(partNum, part.FileSystem, part.FSLabel)
+			if err != nil {
+				return fmt.Errorf("Formatting partition failed: %s\nError: %w", out, err)
+			}
 		}
+		return nil
 	}
 	return nil
 }
