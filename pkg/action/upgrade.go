@@ -282,8 +282,9 @@ func (u *UpgradeAction) Run() (err error) {
 	// Do not reboot/poweroff on cleanup errors
 	err = cleanup.Cleanup(err)
 	if err != nil {
-		return err
+		u.config.Logger.Warnf("failure during cleanup: %s", err.Error())
 	}
+
 	if u.config.Reboot {
 		u.Info("Rebooting in 5 seconds")
 		return utils.Reboot(u.config.Runner, 5)
