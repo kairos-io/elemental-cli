@@ -217,11 +217,8 @@ func (u *UpgradeAction) Run() (err error) {
 	// Only apply rebrand stage for system upgrades
 	if !u.spec.RecoveryUpgrade {
 		u.Info("rebranding")
-
-		err = e.SetDefaultGrubEntry(u.spec.Partitions.State.MountPoint, upgradeImg.MountPoint, u.spec.GrubDefEntry)
-		if err != nil {
-			u.Error("failed setting default entry")
-			return err
+		if rebrandingErr := e.SetDefaultGrubEntry(u.spec.Partitions.State.MountPoint, upgradeImg.MountPoint, u.spec.GrubDefEntry); rebrandingErr != nil {
+			u.config.Logger.Warnf("failed setting default entry: %s", rebrandingErr.Error())
 		}
 	}
 
