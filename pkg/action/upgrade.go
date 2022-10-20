@@ -218,7 +218,8 @@ func (u *UpgradeAction) Run() (err error) {
 	if !u.spec.RecoveryUpgrade {
 		u.Info("rebranding")
 		if rebrandingErr := e.SetDefaultGrubEntry(u.spec.Partitions.State.MountPoint, upgradeImg.MountPoint, u.spec.GrubDefEntry); rebrandingErr != nil {
-			u.config.Logger.Warnf("failed setting default entry: %s", rebrandingErr.Error())
+			u.config.Logger.Warn("failure while rebranding GRUB default entry (ignoring), run with --debug to see more details")
+			u.config.Logger.Debug(rebrandingErr.Error())
 		}
 	}
 
@@ -278,7 +279,8 @@ func (u *UpgradeAction) Run() (err error) {
 
 	// Do not reboot/poweroff on cleanup errors
 	if cleanErr := cleanup.Cleanup(err); cleanErr != nil {
-		u.config.Logger.Warnf("failure during cleanup (ignoring): %s", cleanErr.Error())
+		u.config.Logger.Warn("failure during cleanup (ignoring), run with --debug to see more details")
+		u.config.Logger.Debug(cleanErr.Error())
 	}
 
 	if u.config.Reboot {
