@@ -97,7 +97,7 @@ const (
 	TransitionImgFile       = "transition.img"
 	TransitionSquashFile    = "transition.squashfs"
 	RunningStateDir         = "/run/initramfs/cos-state" // TODO: converge this constant with StateDir/RecoveryDir in dracut module from cos-toolkit
-	RunningRecoveryStateDir = "/run/isoscan/cos-state"   // TODO: converge this constant with StateDir/RecoveryDir in dracut module from cos-toolkit
+	RunningRecoveryStateDir = "/run/initramfs/isoscan"   // TODO: converge this constant with StateDir/RecoveryDir in dracut module from cos-toolkit
 	ActiveImgName           = "active"
 	PassiveImgName          = "passive"
 	RecoveryImgName         = "recovery"
