@@ -280,9 +280,8 @@ func (u *UpgradeAction) Run() (err error) {
 	u.Info("Upgrade completed")
 
 	// Do not reboot/poweroff on cleanup errors
-	err = cleanup.Cleanup(err)
-	if err != nil {
-		u.config.Logger.Warnf("failure during cleanup: %s", err.Error())
+	if cleanErr := cleanup.Cleanup(err); cleanErr != nil {
+		u.config.Logger.Warnf("failure during cleanup (ignoring): %s", cleanErr.Error())
 	}
 
 	if u.config.Reboot {
@@ -292,7 +291,8 @@ func (u *UpgradeAction) Run() (err error) {
 		u.Info("Shutting down in 5 seconds")
 		return utils.Shutdown(u.config.Runner, 5)
 	}
-	return err
+
+	return nil
 }
 
 // remove attempts to remove the given path. Does nothing if it doesn't exist
