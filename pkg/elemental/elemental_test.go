@@ -520,7 +520,7 @@ var _ = Describe("Elemental", Label("elemental"), func() {
 			Expect(runner.MatchMilestones([][]string{
 				{
 					"mksquashfs", "/tmp/elemental-tmp", "/tmp/elemental/image.img",
-					"-b", "1024k", "-comp", "gzip", "-Xbcj", "x86",
+					"-b", "1024k", "-comp", "gzip",
 				},
 			}))
 		})
@@ -566,7 +566,7 @@ var _ = Describe("Elemental", Label("elemental"), func() {
 			Expect(runner.MatchMilestones([][]string{
 				{
 					"mksquashfs", "/tmp/elemental-tmp", "/tmp/elemental/image.img",
-					"-b", "1024k", "-comp", "gzip", "-Xbcj", "x86",
+					"-b", "1024k", "-comp", "gzip",
 				},
 			}))
 		})
