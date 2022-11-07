@@ -143,7 +143,7 @@ func GetDefaultSquashfsOptions() []string {
 }
 
 func GetDefaultSquashfsCompressionOptions() []string {
-	options := []string{"-comp", "xz", "-Xbcj"}
+	options := []string{"-comp", "gzip", "-Xbcj"}
 	// Set the filter based on arch for best compression results
 	if runtime.GOARCH == "arm64" {
 		options = append(options, "arm")
