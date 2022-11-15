@@ -41,18 +41,6 @@ func NewGrub(config *v1.Config) *Grub {
 	return g
 }
 
-func findGrubInstall() string {
-	for _, p := range []string{"grub2-install", "grub-install"} {
-		path, err := exec.LookPath(p)
-		if err == nil {
-			return path
-		}
-	}
-
-	// Default to grub2-install
-	return "grub2-install"
-}
-
 // Install installs grub into the device, copy the config file and add any extra TTY to grub
 func (g Grub) Install(target, rootDir, bootDir, grubConf, tty string, efi bool, stateLabel string) (err error) { // nolint:gocyclo
 	var grubargs []string
@@ -293,4 +281,16 @@ func (g Grub) SetPersistentVariables(grubEnvFile string, vars map[string]string)
 		}
 	}
 	return nil
+}
+
+func findGrubInstall() string {
+	for _, p := range []string{"grub2-install", "grub-install"} {
+		path, err := exec.LookPath(p)
+		if err == nil {
+			return path
+		}
+	}
+
+	// Default to grub2-install
+	return "grub2-install"
 }
