@@ -19,6 +19,7 @@ package utils
 import (
 	"fmt"
 	"io/fs"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -38,6 +39,18 @@ func NewGrub(config *v1.Config) *Grub {
 	}
 
 	return g
+}
+
+func findGrubInstall() string {
+	for _, p := range []string{"grub2-install", "grub-install"} {
+		path, err := exec.LookPath(p)
+		if err == nil {
+			return path
+		}
+	}
+
+	// Default to grub2-install
+	return "grub2-install"
 }
 
 // Install installs grub into the device, copy the config file and add any extra TTY to grub
@@ -60,8 +73,9 @@ func (g Grub) Install(target, rootDir, bootDir, grubConf, tty string, efi bool, 
 			"--target=i386-pc",
 			target,
 		)
+
 		g.config.Logger.Debugf("Running grub with the following args: %s", grubargs)
-		out, err := g.config.Runner.Run("grub2-install", grubargs...)
+		out, err := g.config.Runner.Run(findGrubInstall(), grubargs...)
 		if err != nil {
 			g.config.Logger.Errorf(string(out))
 			return err
