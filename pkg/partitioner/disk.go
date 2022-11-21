@@ -344,6 +344,17 @@ func (dev *Disk) ExpandLastPartition(size uint) (string, error) {
 		return "", errors.New("There is no partition to expand")
 	}
 
+	// This is a safe guard to avoid re-executing this operation on each boot.
+	// On a system which is partitioned, one sector is left out, so we
+	// use a buffer to avoid expansion at all if we don't have at least 10MB free.
+	// There is no point to try to expand a partition to get 10MB - if we do expansion is to take over
+	// the space for the last partition, which is meant for the persistent data (and thus we want to expand for gaining GBs, not MBs.)
+	freeSpace := dev.computeFreeSpace()
+	limit := MiBToSectors(10, dev.sectorS)
+	if freeSpace < limit {
+		return "", fmt.Errorf("not enough free space (%d) to expand, at least %d is required", freeSpace, limit)
+	}
+
 	part := dev.parts[len(dev.parts)-1]
 	if size > 0 {
 		size = MiBToSectors(size, dev.sectorS)
