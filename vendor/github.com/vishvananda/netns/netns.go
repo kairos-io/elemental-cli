@@ -1,3 +1,11 @@
+// Package netns allows ultra-simple network namespace handling. NsHandles
+// can be retrieved and set. Note that the current namespace is thread
+// local so actions that set and reset namespaces should use LockOSThread
+// to make sure the namespace doesn't change due to a goroutine switch.
+// It is best to close NsHandles when you are done with them. This can be
+// accomplished via a `defer ns.Close()` on the handle. Changing namespaces
+// requires elevated privileges, so in most cases this code needs to be run
+// as root.
 package netns
 
 import (
@@ -30,7 +38,7 @@ func (ns NsHandle) Equal(other NsHandle) bool {
 // String shows the file descriptor number and its dev and inode.
 func (ns NsHandle) String() string {
 	if ns == -1 {
-		return "NS(none)"
+		return "NS(None)"
 	}
 	var s unix.Stat_t
 	if err := unix.Fstat(int(ns), &s); err != nil {
@@ -63,7 +71,7 @@ func (ns *NsHandle) Close() error {
 	if err := unix.Close(int(*ns)); err != nil {
 		return err
 	}
-	*ns = -1
+	(*ns) = -1
 	return nil
 }
 

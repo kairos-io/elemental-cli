@@ -74,8 +74,6 @@ var validShortNameCharacters = map[byte]bool{
 }
 
 // directoryEntry is a single directory entry
-//
-//nolint:structcheck // we are willing to leave unused elements here so that we can know their reference
 type directoryEntry struct {
 	filenameShort      string
 	fileExtension      string
@@ -107,13 +105,13 @@ func (de *directoryEntry) toBytes() ([]byte, error) {
 	if de.filenameLong != "" {
 		lfnBytes, err := longFilenameBytes(de.filenameLong, de.filenameShort, de.fileExtension)
 		if err != nil {
-			return nil, fmt.Errorf("could not convert long filename to directory entries: %v", err)
+			return nil, fmt.Errorf("Could not convert long filename to directory entries: %v", err)
 		}
 		b = append(b, lfnBytes...)
 	}
 
 	// this is for the regular 8.3 entry
-	dosBytes := make([]byte, bytesPerSlot)
+	dosBytes := make([]byte, bytesPerSlot, bytesPerSlot)
 	createDate, createTime := timeToDateTime(de.createTime)
 	modifyDate, modifyTime := timeToDateTime(de.modifyTime)
 	accessDate, _ := timeToDateTime(de.accessTime)
@@ -125,17 +123,17 @@ func (de *directoryEntry) toBytes() ([]byte, error) {
 	// convert the short filename and extension to ascii bytes
 	shortName, err := stringToASCIIBytes(fmt.Sprintf("% -8s", de.filenameShort))
 	if err != nil {
-		return nil, fmt.Errorf("error converting short filename to bytes: %v", err)
+		return nil, fmt.Errorf("Error converting short filename to bytes: %v", err)
 	}
 	// convert the short filename and extension to ascii bytes
 	extension, err := stringToASCIIBytes(fmt.Sprintf("% -3s", de.fileExtension))
 	if err != nil {
-		return nil, fmt.Errorf("error converting file extension to bytes: %v", err)
+		return nil, fmt.Errorf("Error converting file extension to bytes: %v", err)
 	}
 	copy(dosBytes[0:8], shortName)
 	copy(dosBytes[8:11], extension)
 	binary.LittleEndian.PutUint32(dosBytes[28:32], de.fileSize)
-	clusterLocation := make([]byte, 4)
+	clusterLocation := make([]byte, 4, 4)
 	binary.LittleEndian.PutUint32(clusterLocation, de.clusterLocation)
 	dosBytes[26] = clusterLocation[0]
 	dosBytes[27] = clusterLocation[1]
@@ -144,20 +142,20 @@ func (de *directoryEntry) toBytes() ([]byte, error) {
 
 	// set the flags
 	if de.isVolumeLabel {
-		dosBytes[11] |= 0x08
+		dosBytes[11] = dosBytes[11] | 0x08
 	}
 	if de.isSubdirectory {
-		dosBytes[11] |= 0x10
+		dosBytes[11] = dosBytes[11] | 0x10
 	}
 	if de.isArchiveDirty {
-		dosBytes[11] |= 0x20
+		dosBytes[11] = dosBytes[11] | 0x20
 	}
 
 	if de.lowercaseExtension {
-		dosBytes[12] |= 0x04
+		dosBytes[12] = dosBytes[12] | 0x04
 	}
 	if de.lowercaseShortname {
-		dosBytes[12] |= 0x08
+		dosBytes[12] = dosBytes[12] | 0x08
 	}
 
 	b = append(b, dosBytes...)
@@ -168,18 +166,18 @@ func (de *directoryEntry) toBytes() ([]byte, error) {
 // parseDirEntries takes all of the bytes in a special file (i.e. a directory)
 // and gets all of the DirectoryEntry for that directory
 // this is, essentially, the equivalent of `ls -l` or if you prefer `dir`
-func parseDirEntries(b []byte) ([]*directoryEntry, error) {
+func parseDirEntries(b []byte, f *FileSystem) ([]*directoryEntry, error) {
 	dirEntries := make([]*directoryEntry, 0, 20)
 	// parse the data into Fat32DirectoryEntry
 	lfn := ""
 	// this should be used to count the LFN entries and that they make sense
-	//     lfnCount := 0
+	//lfnCount := 0
 byteLoop:
 	for i := 0; i < len(b); i += 32 {
 		// is this the beginning of all empty entries?
 		switch b[i+0] {
 		case 0:
-			// need to break "byteLoop" else break will break the switches
+			// need to break "byteLoop" else break will break the switchs
 			break byteLoop
 		case 0xe5:
 			continue
@@ -189,12 +187,13 @@ byteLoop:
 			// check if this is the last logical / first physical and how many there are
 			if b[i]&0x40 == 0x40 {
 				lfn = ""
+				//lfnCount = int(b[i] & 0xf)
 			}
 			// parse the long filename
 			tmpLfn, err := longFilenameEntryFromBytes(b[i : i+32])
 			// an error is impossible since we pass exactly 32, but we leave the handler here anyways
 			if err != nil {
-				return nil, fmt.Errorf("error parsing long filename at position %d: %v", i, err)
+				return nil, fmt.Errorf("Error parsing long filename at position %d: %v", i, err)
 			}
 			lfn = tmpLfn + lfn
 			continue
@@ -205,7 +204,7 @@ byteLoop:
 		accessDate := binary.LittleEndian.Uint16(b[i+18 : i+20])
 		modifyTime := binary.LittleEndian.Uint16(b[i+22 : i+24])
 		modifyDate := binary.LittleEndian.Uint16(b[i+24 : i+26])
-		re := regexp.MustCompile(" +$")
+		re := regexp.MustCompile("[ ]+$")
 		sfn := re.ReplaceAllString(string(b[i:i+8]), "")
 		extension := re.ReplaceAllString(string(b[i+8:i+11]), "")
 		isSubdirectory := b[i+11]&0x10 == 0x10
@@ -236,7 +235,7 @@ byteLoop:
 	return dirEntries, nil
 }
 
-func dateTimeToTime(d, t uint16) time.Time {
+func dateTimeToTime(d uint16, t uint16) time.Time {
 	year := int(d>>9) + 1980
 	month := time.Month((d >> 5) & 0x0f)
 	date := int(d & 0x1f)
@@ -245,14 +244,14 @@ func dateTimeToTime(d, t uint16) time.Time {
 	hour := int(t >> 11)
 	return time.Date(year, month, date, hour, minute, second, 0, time.UTC)
 }
-func timeToDateTime(t time.Time) (datePart, timePart uint16) {
+func timeToDateTime(t time.Time) (uint16, uint16) {
 	year := t.Year()
 	month := int(t.Month())
-	day := t.Day()
+	date := t.Day()
 	second := t.Second()
 	minute := t.Minute()
 	hour := t.Hour()
-	retDate := (year-1980)<<9 + (month << 5) + day
+	retDate := (year-1980)<<9 + (month << 5) + date
 	retTime := hour<<11 + minute<<5 + (second / 2)
 	return uint16(retDate), uint16(retTime)
 }
@@ -261,7 +260,7 @@ func longFilenameBytes(s, shortName, extension string) ([]byte, error) {
 	// we need the checksum of the short name
 	checksum, err := lfnChecksum(shortName, extension)
 	if err != nil {
-		return nil, fmt.Errorf("could not calculate checksum for 8.3 filename: %v", err)
+		return nil, fmt.Errorf("Could not calculate checksum for 8.3 filename: %v", err)
 	}
 	// should be multiple of exactly 32 bytes
 	slots := calculateSlots(s)
@@ -303,7 +302,6 @@ func longFilenameBytes(s, shortName, extension string) ([]byte, error) {
 		// next 10 bytes are 5 chars of data
 		tmpb = append(tmpb, b2[offset:offset+10]...)
 		// next is a single byte indicating LFN, followed by single byte 0x00
-		//nolint:gocritic // gocritic complains about the ability to combine 2 appends into one; we want to be more explicit here
 		tmpb = append(tmpb, 0x0f, 0x00)
 		// next is checksum
 		tmpb = append(tmpb, checksum)
@@ -317,7 +315,7 @@ func longFilenameBytes(s, shortName, extension string) ([]byte, error) {
 	}
 
 	// the first byte should have bit 6 set
-	b[0] |= 0x40
+	b[0] = b[0] | 0x40
 
 	return b, nil
 }
@@ -357,17 +355,17 @@ func longFilenameEntryFromBytes(b []byte) (string, error) {
 func lfnChecksum(name, extension string) (byte, error) {
 	nameBytes, err := stringToValidASCIIBytes(name)
 	if err != nil {
-		return 0x00, fmt.Errorf("invalid shortname character in filename: %s", name)
+		return 0x00, fmt.Errorf("Invalid shortname character in filename: %s", name)
 	}
 	extensionBytes, err := stringToValidASCIIBytes(extension)
 	if err != nil {
-		return 0x00, fmt.Errorf("invalid shortname character in extension: %s", extension)
+		return 0x00, fmt.Errorf("Invalid shortname character in extension: %s", extension)
 	}
 
 	// now make sure we don't have too many - and fill in blanks
 	length := len(nameBytes)
 	if length > 8 {
-		return 0x00, fmt.Errorf("short name for file is longer than allowed 8 bytes: %s", name)
+		return 0x00, fmt.Errorf("Short name for file is longer than allowed 8 bytes: %s", name)
 	}
 	for i := 8; i > length; i-- {
 		nameBytes = append(nameBytes, 0x20)
@@ -375,14 +373,12 @@ func lfnChecksum(name, extension string) (byte, error) {
 
 	length = len(extensionBytes)
 	if length > 3 {
-		return 0x00, fmt.Errorf("extension for file is longer than allowed 3 bytes: %s", extension)
+		return 0x00, fmt.Errorf("Extension for file is longer than allowed 3 bytes: %s", extension)
 	}
 	for i := 3; i > length; i-- {
 		extensionBytes = append(extensionBytes, 0x20)
 	}
-	b := make([]byte, len(nameBytes))
-	copy(b, nameBytes)
-	b = append(b, extensionBytes...)
+	b := append(nameBytes, extensionBytes...)
 
 	// calculate the checksum
 	var sum byte = 0x00
@@ -404,7 +400,7 @@ func stringToValidASCIIBytes(s string) ([]byte, error) {
 		if validShortNameCharacters[b2] {
 			continue
 		}
-		return nil, fmt.Errorf("invalid 8.3 character")
+		return nil, fmt.Errorf("Invalid 8.3 character")
 	}
 	return b, nil
 }
@@ -412,7 +408,7 @@ func stringToValidASCIIBytes(s string) ([]byte, error) {
 // convert a string to a byte array, if all characters are valid ascii
 func stringToASCIIBytes(s string) ([]byte, error) {
 	length := len(s)
-	b := make([]byte, length)
+	b := make([]byte, length, length)
 	// convert the name into 11 bytes
 	r := []rune(s)
 	// take the first 8 characters
@@ -420,7 +416,7 @@ func stringToASCIIBytes(s string) ([]byte, error) {
 		val := int(r[i])
 		// we only can handle values less than max byte = 255
 		if val > 255 {
-			return nil, fmt.Errorf("non-ASCII character in name: %s", s)
+			return nil, fmt.Errorf("Non-ASCII character in name: %s", s)
 		}
 		b[i] = byte(val)
 	}
@@ -440,14 +436,14 @@ func calculateSlots(s string) int {
 
 // convert LFN to short name
 // returns shortName, extension, isLFN, isTruncated
-//
-//	isLFN : was there an LFN that had to be converted
-//	isTruncated : was the shortname longer than 8 chars and had to be converted?
-func convertLfnSfn(name string) (shortName, extension string, isLFN, isTruncated bool) {
+//   isLFN : was there an LFN that had to be converted
+//   isTruncated : was the shortname longer than 8 chars and had to be converted?
+func convertLfnSfn(name string) (string, string, bool, bool) {
+	isLFN, isTruncated := false, false
 	// get last period in name
 	lastDot := strings.LastIndex(name, ".")
 	// now convert it
-	var rawShortName, rawExtension string
+	var shortName, extension, rawShortName, rawExtension string
 	rawShortName = name
 	// get the extension
 	if lastDot > -1 {

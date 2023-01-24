@@ -188,11 +188,11 @@ github.com/cpuguy83/go-md2man/v2/md2man
 github.com/crillab/gophersat/bf
 github.com/crillab/gophersat/explain
 github.com/crillab/gophersat/solver
-# github.com/davidcassany/linuxkit/pkg/metadata v0.0.0-20230124104020-93ac9dd5b8e1
+# github.com/davidcassany/linuxkit/pkg/metadata v0.0.0-20220725140037-b49d0fec13b3
 github.com/davidcassany/linuxkit/pkg/metadata/providers
 # github.com/denisbrodbeck/machineid v1.0.1
 github.com/denisbrodbeck/machineid
-# github.com/diskfs/go-diskfs v1.2.1-0.20230123115902-fce1828bbbfa
+# github.com/diskfs/go-diskfs v1.2.1-0.20211109185859-9509735ba7a4
 github.com/diskfs/go-diskfs
 github.com/diskfs/go-diskfs/disk
 github.com/diskfs/go-diskfs/filesystem
@@ -553,7 +553,7 @@ github.com/moby/term
 github.com/moby/term/windows
 # github.com/morikuni/aec v1.0.0
 github.com/morikuni/aec
-# github.com/mudler/entities v0.0.0-20220905203055-68348bae0f49
+# github.com/mudler/entities v0.0.0-20211108084227-d1414478861b
 github.com/mudler/entities/pkg/entities
 # github.com/mudler/go-pluggable v0.0.0-20211206135551-9263b05c562e
 ## explicit
@@ -584,7 +584,7 @@ github.com/mudler/luet/pkg/tree
 github.com/mudler/luet/pkg/versioner
 # github.com/mudler/topsort v0.0.0-20201103161459-db5c7901c290
 github.com/mudler/topsort
-# github.com/mudler/yip v0.11.5-0.20230124143654-91e88dfb6648
+# github.com/mudler/yip v0.11.4
 ## explicit
 github.com/mudler/yip/pkg/executor
 github.com/mudler/yip/pkg/logger
@@ -625,7 +625,7 @@ github.com/opencontainers/image-spec/specs-go/v1
 github.com/opencontainers/runc/libcontainer/user
 # github.com/otiai10/copy v1.2.1-0.20200916181228-26f84a0b1578
 github.com/otiai10/copy
-# github.com/packethost/packngo v0.29.0
+# github.com/packethost/packngo v0.25.0
 github.com/packethost/packngo/metadata
 # github.com/pelletier/go-toml v1.9.4
 github.com/pelletier/go-toml
@@ -644,7 +644,7 @@ github.com/pjbgf/sha1cd/cgo
 github.com/pjbgf/sha1cd/ubc
 # github.com/pkg/errors v0.9.1
 github.com/pkg/errors
-# github.com/pkg/xattr v0.4.9
+# github.com/pkg/xattr v0.4.7
 github.com/pkg/xattr
 # github.com/prometheus/client_golang v1.12.1
 github.com/prometheus/client_golang/prometheus
@@ -737,7 +737,7 @@ github.com/tredoe/osutil/v2/userutil/crypt/sha512_crypt
 ## explicit
 github.com/twpayne/go-vfs
 github.com/twpayne/go-vfs/vfst
-# github.com/ulikunitz/xz v0.5.11
+# github.com/ulikunitz/xz v0.5.10
 github.com/ulikunitz/xz
 github.com/ulikunitz/xz/internal/hash
 github.com/ulikunitz/xz/internal/xlog
@@ -748,7 +748,7 @@ github.com/vbatts/tar-split/archive/tar
 ## explicit
 github.com/vishvananda/netlink
 github.com/vishvananda/netlink/nl
-# github.com/vishvananda/netns v0.0.4
+# github.com/vishvananda/netns v0.0.0-20211101163701-50045581ed74
 github.com/vishvananda/netns
 # github.com/willdonnelly/passwd v0.0.0-20141013001024-7935dab3074c
 github.com/willdonnelly/passwd

@@ -11,8 +11,8 @@ type Directory struct {
 }
 
 // dirEntriesFromBytes loads the directory entries from the raw bytes
-func (d *Directory) entriesFromBytes(b []byte) error {
-	entries, err := parseDirEntries(b)
+func (d *Directory) entriesFromBytes(b []byte, f *FileSystem) error {
+	entries, err := parseDirEntries(b, f)
 	if err != nil {
 		return err
 	}
@@ -32,7 +32,7 @@ func (d *Directory) entriesToBytes(bytesPerCluster int) ([]byte, error) {
 	}
 	remainder := len(b) % bytesPerCluster
 	extra := bytesPerCluster - remainder
-	zeroes := make([]byte, extra)
+	zeroes := make([]byte, extra, extra)
 	b = append(b, zeroes...)
 	return b, nil
 }
