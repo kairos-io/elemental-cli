@@ -909,7 +909,7 @@ var _ = Describe("Elemental", Label("elemental"), func() {
 			Expect(el.SetDefaultGrubEntry("/mountpoint", "/imgMountPoint", "")).To(BeNil())
 			// Calls grub2-editenv with the loaded content from /etc/os-release
 			Expect(runner.CmdsMatch([][]string{
-				{"grub2-editenv", "/mountpoint/grub_oem_env", "set", "default_menu_entry=test"},
+				{"/usr/bin/grub2-editenv", "/mountpoint/grub_oem_env", "set", "default_menu_entry=test"},
 			})).To(BeNil())
 		})
 		It("Fails setting grubenv", func() {

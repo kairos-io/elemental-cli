@@ -197,7 +197,7 @@ var _ = Describe("Reset action tests", func() {
 			Expect(luet.UnpackChannelCalled()).To(BeTrue())
 		})
 		It("Fails installing grub", func() {
-			cmdFail = "grub2-install"
+			cmdFail = "/usr/sbin/grub2-install"
 			Expect(reset.Run()).NotTo(BeNil())
 			Expect(runner.IncludesCmds([][]string{{"grub2-install"}}))
 		})

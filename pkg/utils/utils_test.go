@@ -905,18 +905,19 @@ var _ = Describe("Utils", Label("utils"), func() {
 					"somefile", map[string]string{"key1": "value1", "key2": "value2"},
 				)).To(BeNil())
 				Expect(runner.IncludesCmds([][]string{
-					{"grub2-editenv", "somefile", "set", "key1=value1"},
-					{"grub2-editenv", "somefile", "set", "key2=value2"},
+					{"/usr/bin/grub2-editenv", "somefile", "set", "key1=value1"},
+					{"/usr/bin/grub2-editenv", "somefile", "set", "key2=value2"},
 				})).To(BeNil())
 			})
 			It("Fails running grub2-editenv", func() {
 				runner.ReturnError = errors.New("grub error")
 				grub := utils.NewGrub(config)
-				Expect(grub.SetPersistentVariables(
+				e := grub.SetPersistentVariables(
 					"somefile", map[string]string{"key1": "value1"},
-				)).NotTo(BeNil())
+				)
+				Expect(e).NotTo(BeNil())
 				Expect(runner.CmdsMatch([][]string{
-					{"grub2-editenv", "somefile", "set", "key1=value1"},
+					{"/usr/bin/grub2-editenv", "somefile", "set", "key1=value1"},
 				})).To(BeNil())
 			})
 		})

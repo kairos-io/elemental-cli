@@ -361,7 +361,7 @@ var _ = Describe("Install action tests", func() {
 
 		It("Fails on grub2-install errors", Label("grub"), func() {
 			spec.Target = device
-			cmdFail = "grub2-install"
+			cmdFail = "/usr/sbin/grub2-install"
 			Expect(installer.Run()).NotTo(BeNil())
 			Expect(runner.MatchMilestones([][]string{{"grub2-install"}}))
 		})
@@ -376,7 +376,7 @@ var _ = Describe("Install action tests", func() {
 		It("Fails setting the grub default entry", Label("grub"), func() {
 			spec.Target = device
 			spec.GrubDefEntry = "cOS"
-			cmdFail = "grub2-editenv"
+			cmdFail = "/usr/bin/grub2-editenv"
 			Expect(installer.Run()).NotTo(BeNil())
 			Expect(runner.MatchMilestones([][]string{{"grub2-editenv", filepath.Join(constants.StateDir, constants.GrubOEMEnv)}}))
 		})
