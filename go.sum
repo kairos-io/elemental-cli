@@ -1296,6 +1296,8 @@ github.com/mudler/luet v0.0.0-20220526130937-264bf53fe7ab h1:MTlVt+yKyzBGWotEZev
 github.com/mudler/luet v0.0.0-20220526130937-264bf53fe7ab/go.mod h1:/dK5pG3mCODr/7YH/aalA5TFOPmo4Kid/uXgWII/wP4=
 github.com/mudler/luet v0.0.0-20221018082252-2513760b00de h1:z/bmyJK+sbxR6LT6g1LxY+UFx+6I0qH4d1qdXllh/NY=
 github.com/mudler/luet v0.0.0-20221018082252-2513760b00de/go.mod h1:X5fy4JwKNfVSmohIr+ixdKsz7DnCuMQycJcPoAYaY98=
+github.com/mudler/luet v0.0.0-20230117111542-5d3751888844 h1:Xexw2Hdv6H8HcDZCEEi8GM5D2TQbE/zL/FckHI2UFuE=
+github.com/mudler/luet v0.0.0-20230117111542-5d3751888844/go.mod h1:X5fy4JwKNfVSmohIr+ixdKsz7DnCuMQycJcPoAYaY98=
 github.com/mudler/topsort v0.0.0-20201103161459-db5c7901c290 h1:426hFyXMpXeqIeGJn2cGAW9ogvM2Jf+Jv23gtVPvBLM=
 github.com/mudler/topsort v0.0.0-20201103161459-db5c7901c290/go.mod h1:uP5BBgFxq2wNWo7n1vnY5SSbgL0WDshVJrOO12tZ/lA=
 github.com/mudler/yip v0.11.2 h1:zV/MGFL6UxoboybLHYWTeWAthjjmRqyibEJL7REZvwY=

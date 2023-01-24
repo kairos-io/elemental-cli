@@ -558,7 +558,7 @@ github.com/mudler/entities/pkg/entities
 # github.com/mudler/go-pluggable v0.0.0-20211206135551-9263b05c562e
 ## explicit
 github.com/mudler/go-pluggable
-# github.com/mudler/luet v0.0.0-20221018082252-2513760b00de
+# github.com/mudler/luet v0.0.0-20230117111542-5d3751888844
 ## explicit
 github.com/mudler/luet/pkg/api/core/bus
 github.com/mudler/luet/pkg/api/core/config
