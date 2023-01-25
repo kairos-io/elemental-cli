@@ -38,7 +38,7 @@ require (
 	github.com/spf13/viper v1.10.0
 	github.com/twpayne/go-vfs v1.7.2
 	github.com/vishvananda/netlink v1.2.1-beta.2 // indirect
-	github.com/zloylos/grsync v1.6.1
+	github.com/zloylos/grsync v1.7.0
 	golang.org/x/crypto v0.5.0 // indirect
 	golang.org/x/net v0.5.0 // indirect
 	golang.org/x/tools v0.5.0 // indirect

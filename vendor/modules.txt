@@ -759,7 +759,7 @@ github.com/xo/terminfo
 # github.com/zcalusic/sysinfo v0.9.5
 github.com/zcalusic/sysinfo
 github.com/zcalusic/sysinfo/cpuid
-# github.com/zloylos/grsync v1.6.1 => github.com/rancher-sandbox/grsync v1.6.2-0.20220526080038-4032e9b0e97c
+# github.com/zloylos/grsync v1.7.0
 ## explicit
 github.com/zloylos/grsync
 # go.etcd.io/bbolt v1.3.6
@@ -1031,3 +1031,4 @@ k8s.io/utils/keymutex
 pault.ag/go/modprobe
 # pault.ag/go/topsort v0.1.1
 pault.ag/go/topsort
+# github.com/zloylos/grsync v1.6.1 => github.com/rancher-sandbox/grsync v1.6.2-0.20220526080038-4032e9b0e97c

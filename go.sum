@@ -1789,6 +1789,8 @@ github.com/yvasiyarov/gorelic v0.0.0-20141212073537-a9bba5b9ab50/go.mod h1:NUSPS
 github.com/yvasiyarov/newrelic_platform_go v0.0.0-20140908184405-b21fdbd4370f/go.mod h1:GlGEuHIJweS1mbCqG+7vt2nvWLzLLnRHbXz5JKd/Qbg=
 github.com/zcalusic/sysinfo v0.9.5 h1:ivoHyj9aIAYkwzo1+8QgJ5s4oeE6Etx9FmZtqa4wJjQ=
 github.com/zcalusic/sysinfo v0.9.5/go.mod h1:Z/gPVufBrFc8X5sef3m6kkw3r3nlNFp+I6bvASfvBZQ=
+github.com/zloylos/grsync v1.7.0 h1:7JjxC4CdzA7Inh771VelfUWdxIiMcXCXF5qV1Vx+W6E=
+github.com/zloylos/grsync v1.7.0/go.mod h1:0Ue43fnWwx3doC5GkfmwmUwCAvQ54h06FRHXXX3ZWls=
 go.etcd.io/bbolt v1.3.0/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.etcd.io/bbolt v1.3.3/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
