@@ -1,6 +1,6 @@
 ARG GOLANG_IMAGE_VERSION=1.17-alpine
 ARG COSIGN_VERSION=1.4.1-5
-ARG LEAP_VERSION=15.4
+ARG LEAP_VERSION=42.3
 
 FROM quay.io/costoolkit/releases-green:cosign-toolchain-$COSIGN_VERSION AS cosign-bin
 
