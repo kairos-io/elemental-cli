@@ -7,7 +7,7 @@ on:
 env:
   DOCKER_REPO: quay.io/costoolkit/elemental-cli-ci
 jobs:
-  build:
+  docker_build_master:
     runs-on: ubuntu-latest
     permissions:
       id-token: write  # undocumented OIDC support.

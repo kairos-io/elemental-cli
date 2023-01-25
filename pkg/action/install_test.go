@@ -20,10 +20,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"path/filepath"
-
 	"github.com/jaypipes/ghw/pkg/block"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/rancher/elemental-cli/pkg/action"
@@ -34,6 +31,8 @@ import (
 	v1mock "github.com/rancher/elemental-cli/tests/mocks"
 	"github.com/twpayne/go-vfs"
 	"github.com/twpayne/go-vfs/vfst"
+	"path/filepath"
+	"regexp"
 )
 
 const printOutput = `BYT;
@@ -100,7 +99,8 @@ var _ = Describe("Install action tests", func() {
 			partedOut := printOutput
 			cmdFail = ""
 			runner.SideEffect = func(cmd string, args ...string) ([]byte, error) {
-				if cmdFail == cmd {
+				regexCmd := regexp.MustCompile(cmdFail)
+				if cmdFail != "" && regexCmd.MatchString(cmd) {
 					return []byte{}, errors.New(fmt.Sprintf("failed on %s", cmd))
 				}
 				switch cmd {
@@ -361,7 +361,7 @@ var _ = Describe("Install action tests", func() {
 
 		It("Fails on grub2-install errors", Label("grub"), func() {
 			spec.Target = device
-			cmdFail = "grub2-install"
+			cmdFail = utils.FindCommand("grub2-install", []string{"grub2-install", "grub-install"})
 			Expect(installer.Run()).NotTo(BeNil())
 			Expect(runner.MatchMilestones([][]string{{"grub2-install"}}))
 		})
@@ -376,9 +376,9 @@ var _ = Describe("Install action tests", func() {
 		It("Fails setting the grub default entry", Label("grub"), func() {
 			spec.Target = device
 			spec.GrubDefEntry = "cOS"
-			cmdFail = "grub2-editenv"
+			cmdFail = utils.FindCommand("grub2-editenv", []string{"grub2-editenv", "grub-editenv"})
 			Expect(installer.Run()).NotTo(BeNil())
-			Expect(runner.MatchMilestones([][]string{{"grub2-editenv", filepath.Join(constants.StateDir, constants.GrubOEMEnv)}}))
+			Expect(runner.MatchMilestones([][]string{{cmdFail, filepath.Join(constants.StateDir, constants.GrubOEMEnv)}}))
 		})
 	})
 })

@@ -6,7 +6,7 @@ on:
 env:
   DOCKER_REPO: quay.io/costoolkit/elemental-cli
 jobs:
-  build:
+  docker_build_tag:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

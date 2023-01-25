@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -333,7 +332,7 @@ func configLogger(log v1.Logger, vfs v1.FS) {
 		}
 	} else { // no logfile
 		if viper.GetBool("quiet") { // quiet is enabled so discard all logging
-			log.SetOutput(ioutil.Discard)
+			log.SetOutput(io.Discard)
 		} else { // default to stdout
 			log.SetOutput(os.Stdout)
 		}
