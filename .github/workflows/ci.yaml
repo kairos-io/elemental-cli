@@ -1,16 +1,92 @@
-name: Docker build and push
+name: ci
+
 on:
+  pull_request:
   push:
     branches:
       - main
 
-env:
-  DOCKER_REPO: quay.io/costoolkit/elemental-cli-ci
+concurrency:
+  group: ci-${{ github.ref || github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.18.x
+      - name: Analysis
+        uses: golangci/golangci-lint-action@v3
+        with:
+          args: -v
+  docs_build:
+    needs:
+      - lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.18.x
+      - name: Build
+        run: make build_docs
+  build:
+    runs-on: ubuntu-latest
+    needs:
+      - docs_build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.18.x
+      - name: Build
+        run: make build
+  test:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Install Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '^1.18'
+      - name: Deps
+        run: make test_deps
+      - name: Run tests
+        run: |
+          make test
+          sudo env PATH="$PATH" make test_root
+      - name: Merge coverage
+        run: |
+          echo "mode: atomic" > coverage.out
+          grep -v "mode: atomic" coverage.txt >> coverage.out
+          grep -v "mode: atomic" coverage_root.txt >> coverage.out
+      - name: Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.out
   docker_build_master:
     runs-on: ubuntu-latest
+    needs:
+      - test
+    if: github.ref == 'refs/heads/main'
+    env:
+      DOCKER_REPO: ttl.sh/elemental-cli
     permissions:
-      id-token: write  # undocumented OIDC support.
+      id-token: write
       contents: write
     steps:
       - name: Checkout code
