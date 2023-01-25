@@ -604,3 +604,17 @@ func parseOsRelease(fs v1.FS, filename string) (osrelease map[string]string, err
 	}
 	return
 }
+
+// FindCommand will search for the command(s) in the options given to find the current command
+// If it cant find it returns the default value give. Useful for the same binaries with different names across OS
+func FindCommand(defaultPath string, options []string) string {
+	for _, p := range options {
+		path, err := exec.LookPath(p)
+		if err == nil {
+			return path
+		}
+	}
+
+	// Otherwise return default
+	return defaultPath
+}

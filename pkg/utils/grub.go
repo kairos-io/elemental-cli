@@ -19,7 +19,6 @@ package utils
 import (
 	"fmt"
 	"io/fs"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -63,7 +62,7 @@ func (g Grub) Install(target, rootDir, bootDir, grubConf, tty string, efi bool, 
 		)
 
 		g.config.Logger.Debugf("Running grub with the following args: %s", grubargs)
-		out, err := g.config.Runner.Run(findCommand("grub2-install", []string{"grub2-install", "grub-install"}), grubargs...)
+		out, err := g.config.Runner.Run(FindCommand("grub2-install", []string{"grub2-install", "grub-install"}), grubargs...)
 		if err != nil {
 			g.config.Logger.Errorf(string(out))
 			return err
@@ -274,23 +273,11 @@ func (g Grub) Install(target, rootDir, bootDir, grubConf, tty string, efi bool, 
 func (g Grub) SetPersistentVariables(grubEnvFile string, vars map[string]string) error {
 	for key, value := range vars {
 		g.config.Logger.Debugf("Running grub2-editenv with params: %s set %s=%s", grubEnvFile, key, value)
-		out, err := g.config.Runner.Run(findCommand("grub2-editenv", []string{"grub2-editenv", "grub-editenv"}), grubEnvFile, "set", fmt.Sprintf("%s=%s", key, value))
+		out, err := g.config.Runner.Run(FindCommand("grub2-editenv", []string{"grub2-editenv", "grub-editenv"}), grubEnvFile, "set", fmt.Sprintf("%s=%s", key, value))
 		if err != nil {
 			g.config.Logger.Errorf(fmt.Sprintf("Failed setting grub variables: %s", out))
 			return err
 		}
 	}
 	return nil
-}
-
-func findCommand(def string, options []string) string {
-	for _, p := range options {
-		path, err := exec.LookPath(p)
-		if err == nil {
-			return path
-		}
-	}
-
-	// Otherwise return default
-	return def
 }

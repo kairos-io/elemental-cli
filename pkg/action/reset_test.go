@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"errors"
 	"path/filepath"
+	"regexp"
 
 	"github.com/jaypipes/ghw/pkg/block"
 	. "github.com/onsi/ginkgo/v2"
@@ -148,8 +149,9 @@ var _ = Describe("Reset action tests", func() {
 			Expect(err).To(BeNil())
 
 			runner.SideEffect = func(cmd string, args ...string) ([]byte, error) {
-				if cmdFail == cmd {
-					return []byte{}, errors.New("Command failed")
+				regexCmd := regexp.MustCompile(cmdFail)
+				if cmdFail != "" && regexCmd.MatchString(cmd) {
+					return []byte{}, errors.New("command failed")
 				}
 				return []byte{}, nil
 			}
@@ -197,9 +199,9 @@ var _ = Describe("Reset action tests", func() {
 			Expect(luet.UnpackChannelCalled()).To(BeTrue())
 		})
 		It("Fails installing grub", func() {
-			cmdFail = "/usr/sbin/grub2-install"
+			cmdFail = utils.FindCommand("grub2-install", []string{"grub2-install", "grub-install"})
 			Expect(reset.Run()).NotTo(BeNil())
-			Expect(runner.IncludesCmds([][]string{{"grub2-install"}}))
+			Expect(runner.IncludesCmds([][]string{{cmdFail}}))
 		})
 		It("Fails formatting state partition", func() {
 			cmdFail = "mkfs.ext4"
