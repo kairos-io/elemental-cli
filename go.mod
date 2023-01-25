@@ -23,7 +23,7 @@ require (
 	github.com/huandu/xstrings v1.4.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/itchyny/gojq v0.12.11 // indirect
-	github.com/jaypipes/ghw v0.9.1-0.20220511134554-dac2f19e1c76
+	github.com/jaypipes/ghw v0.9.1-0.20221223161525-77ab5ed48ca8
 	github.com/joho/godotenv v1.4.0
 	github.com/mitchellh/mapstructure v1.4.3
 	github.com/mudler/entities v0.0.0-20220905203055-68348bae0f49 // indirect
