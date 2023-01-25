@@ -82,7 +82,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - test
-    if: github.ref == 'refs/heads/main'
+    if: ${{ false }} #github.ref == 'refs/heads/main'
     env:
       DOCKER_REPO: ttl.sh/elemental-cli
     permissions:
