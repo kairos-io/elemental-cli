@@ -3,9 +3,13 @@ on:
   push:
     branches:
       - main
+concurrency:
+  group: ci-docs-${{ github.ref || github.head_ref }}
+  cancel-in-progress: true
 jobs:
   createPullRequest:
     runs-on: ubuntu-latest
+    if: ${{ false }} # disabled. There is no bot token yet in the repoo
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -13,7 +17,6 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: 1.18.x
-
       - name: Build
         run: make build_docs
       - name: Create Pull Request
@@ -28,6 +31,4 @@ jobs:
           delete-branch: true
           reviewers: |
             itxaka
-            davidcassany
             mudler
-            mjura
