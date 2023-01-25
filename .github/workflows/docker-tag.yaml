@@ -27,7 +27,7 @@ jobs:
           echo "::set-output name=elemental_tag::$TAG"
       - name: Docker meta for tag
         id: meta
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v4
         with:
           images: |
             ${{ env.DOCKER_REPO }}
