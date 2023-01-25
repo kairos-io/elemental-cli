@@ -6,7 +6,7 @@ go 1.16
 replace github.com/zloylos/grsync v1.6.1 => github.com/rancher-sandbox/grsync v1.6.2-0.20220526080038-4032e9b0e97c
 
 // v5.4.2 is the last compatible one with yip. Once tip updates its go.mod file we can remove this
-replace github.com/go-git/go-git/v5 => github.com/go-git/go-git/v5 v5.4.2
+replace github.com/go-git/go-git/v5 => github.com/go-git/go-git/v5 v5.5.2
 
 require (
 	github.com/Masterminds/sprig/v3 v3.2.3 // indirect
