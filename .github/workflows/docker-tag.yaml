@@ -8,6 +8,7 @@ env:
 jobs:
   docker_build_tag:
     runs-on: ubuntu-latest
+    if: ${{ false }} # disabled until we settle in name and quay repo
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
