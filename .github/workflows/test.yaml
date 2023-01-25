@@ -40,6 +40,6 @@ jobs:
           grep -v "mode: atomic" coverage_root.txt >> coverage.out
       - name: Codecov
         if: steps.changed-docker-files.outputs.only_changed == 'false'
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           file: ./coverage.out
