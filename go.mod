@@ -25,7 +25,7 @@ require (
 	github.com/itchyny/gojq v0.12.11 // indirect
 	github.com/jaypipes/ghw v0.9.1-0.20221223161525-77ab5ed48ca8
 	github.com/joho/godotenv v1.4.0
-	github.com/mitchellh/mapstructure v1.4.3
+	github.com/mitchellh/mapstructure v1.5.0
 	github.com/mudler/entities v0.0.0-20220905203055-68348bae0f49 // indirect
 	github.com/mudler/go-pluggable v0.0.0-20220716112424-189d463e3ff3
 	github.com/mudler/luet v0.0.0-20230117111542-5d3751888844
