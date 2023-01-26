@@ -16,15 +16,15 @@ require (
 	github.com/cloudflare/circl v1.3.1 // indirect
 	github.com/distribution/distribution v2.8.1+incompatible
 	github.com/docker/docker v20.10.23+incompatible
-	github.com/docker/go-units v0.4.0
+	github.com/docker/go-units v0.5.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/huandu/xstrings v1.4.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/itchyny/gojq v0.12.11 // indirect
 	github.com/jaypipes/ghw v0.9.1-0.20221223161525-77ab5ed48ca8
 	github.com/joho/godotenv v1.4.0
-	github.com/mitchellh/mapstructure v1.4.3
-	github.com/mudler/go-pluggable v0.0.0-20211206135551-9263b05c562e
+	github.com/mitchellh/mapstructure v1.5.0
+	github.com/mudler/go-pluggable v0.0.0-20220716112424-189d463e3ff3
 	github.com/mudler/luet v0.0.0-20230117111542-5d3751888844
 	github.com/mudler/yip v0.11.5-0.20230124143654-91e88dfb6648
 	github.com/onsi/ginkgo/v2 v2.7.0

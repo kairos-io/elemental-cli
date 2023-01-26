@@ -562,6 +562,8 @@ github.com/docker/go-metrics v0.0.1/go.mod h1:cG1hvH2utMXtqgqqYE9plW6lDxS3/5ayHz
 github.com/docker/go-units v0.3.3/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
 github.com/docker/go-units v0.4.0 h1:3uh0PgVws3nIA0Q+MwDC8yjEPf9zjRfZZWXZYDct3Tw=
 github.com/docker/go-units v0.4.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
+github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4=
+github.com/docker/go-units v0.5.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
 github.com/docker/libnetwork v0.8.0-dev.2.0.20200612180813-9e99af28df21/go.mod h1:93m0aTqz6z+g32wla4l4WxTrdtvBRmVzYRkYvasA5Z8=
 github.com/docker/libnetwork v0.8.0-dev.2.0.20200917202933-d0951081b35f h1:jC/ZXgYdzCUuKFkKGNiekhnIkGfUrdelEqvg4Miv440=
 github.com/docker/libnetwork v0.8.0-dev.2.0.20200917202933-d0951081b35f/go.mod h1:93m0aTqz6z+g32wla4l4WxTrdtvBRmVzYRkYvasA5Z8=
@@ -1190,6 +1192,8 @@ github.com/mitchellh/mapstructure v1.4.1/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RR
 github.com/mitchellh/mapstructure v1.4.2/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RRV2QTWOzhPopBRo=
 github.com/mitchellh/mapstructure v1.4.3 h1:OVowDSCllw/YjdLkam3/sm7wEtOy59d8ndGgCcyj8cs=
 github.com/mitchellh/mapstructure v1.4.3/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RRV2QTWOzhPopBRo=
+github.com/mitchellh/mapstructure v1.5.0 h1:jeMsZIYE/09sWLaz43PL7Gy6RuMjD2eJVyuac5Z2hdY=
+github.com/mitchellh/mapstructure v1.5.0/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RRV2QTWOzhPopBRo=
 github.com/mitchellh/osext v0.0.0-20151018003038-5e2d6d41470f/go.mod h1:OkQIRizQZAeMln+1tSwduZz7+Af5oFlKirV/MSYes2A=
 github.com/mitchellh/reflectwalk v1.0.0/go.mod h1:mSTlrgnPZtwu0c4WaC2kGObEpuNDbx0jmZXqmk4esnw=
 github.com/mitchellh/reflectwalk v1.0.2 h1:G2LzWKi524PWgd3mLHV8Y5k7s6XUvT0Gef6zxSIeXaQ=
@@ -1239,6 +1243,8 @@ github.com/mudler/entities v0.0.0-20220905203055-68348bae0f49 h1:P1QgHLh0hX935j6
 github.com/mudler/entities v0.0.0-20220905203055-68348bae0f49/go.mod h1:qquFT9tYp+/NO7tTotto4BT9zSRYSMDxo2PGZwujpFA=
 github.com/mudler/go-pluggable v0.0.0-20211206135551-9263b05c562e h1:CZI+kJW2+WjZXLWWnVzi6NDQ6SfwSfeNqq5d1iDiwyY=
 github.com/mudler/go-pluggable v0.0.0-20211206135551-9263b05c562e/go.mod h1:WmKcT8ONmhDQIqQ+HxU+tkGWjzBEyY/KFO8LTGCu4AI=
+github.com/mudler/go-pluggable v0.0.0-20220716112424-189d463e3ff3 h1:t4X6t8WisUy5mExfS58RBOkzaEGmuor5kOUMQS8lT2g=
+github.com/mudler/go-pluggable v0.0.0-20220716112424-189d463e3ff3/go.mod h1:WmKcT8ONmhDQIqQ+HxU+tkGWjzBEyY/KFO8LTGCu4AI=
 github.com/mudler/luet v0.0.0-20230117111542-5d3751888844 h1:Xexw2Hdv6H8HcDZCEEi8GM5D2TQbE/zL/FckHI2UFuE=
 github.com/mudler/luet v0.0.0-20230117111542-5d3751888844/go.mod h1:X5fy4JwKNfVSmohIr+ixdKsz7DnCuMQycJcPoAYaY98=
 github.com/mudler/topsort v0.0.0-20201103161459-db5c7901c290 h1:426hFyXMpXeqIeGJn2cGAW9ogvM2Jf+Jv23gtVPvBLM=
