@@ -45,7 +45,7 @@ jobs:
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_TOKEN }}
       - name: Build image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         id: docker_build
         with:
           context: .
@@ -79,7 +79,7 @@ jobs:
           sudo losetup -D $LOOP
           rm disk.img
       - name: Push image  # should be a free build as everything has been cached and loaded
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           push: true
