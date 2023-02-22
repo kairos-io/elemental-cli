@@ -421,6 +421,12 @@ func NewResetSpec(cfg v1.Config) (*v1.ResetSpec, error) {
 		}
 		ep.Persistent.Name = constants.PersistentPartName
 	} else {
+		// We could have persistent encrypted which won't appear in ghw list
+		if ep.Persistent == nil {
+			ep.Persistent = utils.GetPersistentViaDM(cfg.Fs)
+		}
+	}
+	if ep.Persistent == nil {
 		cfg.Logger.Warnf("no Persistent partition found")
 	}
 
