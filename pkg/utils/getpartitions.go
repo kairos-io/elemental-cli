@@ -23,7 +23,10 @@ import (
 
 	"github.com/jaypipes/ghw"
 	"github.com/jaypipes/ghw/pkg/block"
+	"github.com/jaypipes/ghw/pkg/context"
+	"github.com/jaypipes/ghw/pkg/linuxpath"
 	ghwUtil "github.com/jaypipes/ghw/pkg/util"
+	cnst "github.com/rancher/elemental-cli/pkg/constants"
 	v1 "github.com/rancher/elemental-cli/pkg/types/v1"
 )
 
@@ -78,4 +81,50 @@ func GetPartitionFS(partition string) (string, error) {
 		}
 	}
 	return "", fmt.Errorf("could not find filesystem for partition %s", partition)
+}
+
+// GetPersistentViaDM tries to get the persistent partition via devicemapper for reset
+// We only need to get all this info due to the fS that we need to use to format the partition
+// Otherwise we could just format with the label ¯\_(ツ)_/¯
+// TODO: store info about persistent and oem in the state.yaml so we can directly load it
+func GetPersistentViaDM(fs v1.FS) *v1.Partition {
+	var persistent *v1.Partition
+	rootPath, _ := fs.RawPath("/")
+	ctx := context.New(ghw.WithDisableTools(), ghw.WithDisableWarnings(), ghw.WithChroot(rootPath))
+	lp := linuxpath.New(ctx)
+	devices, _ := fs.ReadDir(lp.SysBlock)
+	for _, dev := range devices {
+		if !strings.HasPrefix(dev.Name(), "dm-") {
+			continue
+		}
+		// read dev number
+		devNo, err := fs.ReadFile(filepath.Join(lp.SysBlock, dev.Name(), "dev"))
+		// No slaves, empty dm?
+		if err != nil || string(devNo) == "" {
+			continue
+		}
+		udevID := "b" + strings.TrimSpace(string(devNo))
+		// Read udev info about this device
+		udevBytes, _ := fs.ReadFile(filepath.Join(lp.RunUdevData, udevID))
+		udevInfo := make(map[string]string)
+		for _, udevLine := range strings.Split(string(udevBytes), "\n") {
+			if strings.HasPrefix(udevLine, "E:") {
+				if s := strings.SplitN(udevLine[2:], "=", 2); len(s) == 2 {
+					udevInfo[s[0]] = s[1]
+					continue
+				}
+			}
+		}
+		if udevInfo["ID_FS_LABEL"] == cnst.PersistentLabel {
+			// Found it!
+			persistentFS := udevInfo["ID_FS_TYPE"]
+			return &v1.Partition{
+				Name:            cnst.PersistentPartName,
+				FilesystemLabel: cnst.PersistentLabel,
+				FS:              persistentFS,
+				Path:            filepath.Join("/dev/disk/by-label/", cnst.PersistentLabel),
+			}
+		}
+	}
+	return persistent
 }
