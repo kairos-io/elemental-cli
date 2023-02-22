@@ -27,8 +27,8 @@ require (
 	github.com/mudler/go-pluggable v0.0.0-20220716112424-189d463e3ff3
 	github.com/mudler/luet v0.0.0-20230117111542-5d3751888844
 	github.com/mudler/yip v0.11.5-0.20230124143654-91e88dfb6648
-	github.com/onsi/ginkgo/v2 v2.7.0
-	github.com/onsi/gomega v1.26.0
+	github.com/onsi/ginkgo/v2 v2.8.3
+	github.com/onsi/gomega v1.27.0
 	github.com/sanity-io/litter v1.5.5
 	github.com/sergi/go-diff v1.3.1 // indirect
 	github.com/sirupsen/logrus v1.9.0
@@ -39,7 +39,6 @@ require (
 	github.com/vishvananda/netlink v1.2.1-beta.2 // indirect
 	github.com/zloylos/grsync v1.6.1
 	golang.org/x/crypto v0.5.0 // indirect
-	golang.org/x/tools v0.5.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/mount-utils v0.23.0
