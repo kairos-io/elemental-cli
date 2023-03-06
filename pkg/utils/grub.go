@@ -133,7 +133,6 @@ func (g Grub) Install(target, rootDir, bootDir, grubConf, tty string, efi bool, 
 		// as they were before. We now use the bundled grub.efi provided by the shim package
 		g.config.Logger.Infof("Generating grub files for efi on %s", target)
 		var foundModules bool
-		var foundEfi bool
 		for _, m := range []string{"loopback.mod", "squash4.mod", "xzio.mod", "gzio.mod"} {
 			err = WalkDirFs(g.config.Fs, rootDir, func(path string, d fs.DirEntry, err error) error {
 				if err != nil {
@@ -167,93 +166,37 @@ func (g Grub) Install(target, rootDir, bootDir, grubConf, tty string, efi bool, 
 		}
 
 		// Copy needed files for efi boot
-		system, err := IdentifySourceSystem(g.config.Fs, rootDir)
-		if err != nil {
-			return err
-		}
-		g.config.Logger.Infof("Identified source system as %s", system)
-
-		var shimFiles []string
-		var shimName string
-
-		switch system {
-		case cnst.Fedora:
-			switch g.config.Arch {
-			case cnst.ArchArm64:
-				shimFiles = []string{"shimaa64.efi", "mmaa64.efi", "grubx64.efi"}
-				shimName = "shimaa64.efi"
-			default:
-				shimFiles = []string{"shimx64.efi", "mmx64.efi", "grubx64.efi"}
-				shimName = "shimx64.efi"
-			}
-		case cnst.Ubuntu:
-			switch g.config.Arch {
-			case cnst.ArchArm64:
-				shimFiles = []string{"shimaa64.efi.signed", "mmaa64.efi", "grubx64.efi.signed"}
-				shimName = "shimaa64.efi.signed"
-			default:
-				shimFiles = []string{"shimx64.efi.signed", "mmx64.efi", "grubx64.efi.signed"}
-				shimName = "shimx64.efi.signed"
-			}
-		case cnst.Suse:
-			shimFiles = []string{"shim.efi", "MokManager.efi", "grub.efi"}
-			shimName = "shim.efi"
-		}
+		shimFiles := cnst.GetGrubFilePaths(g.config.Arch)
 
 		for _, f := range shimFiles {
-			_ = WalkDirFs(g.config.Fs, rootDir, func(path string, d fs.DirEntry, err error) error {
-				if err != nil {
-					return err
-				}
+			_, name := filepath.Split(f)
+			fileWriteName := filepath.Join(cnst.EfiDir, fmt.Sprintf("EFI/boot/%s", name))
+			g.config.Logger.Debugf("Copying %s to %s", f, fileWriteName)
 
-				if d.Name() == f {
-					// On suse systems check if the path contains the proper arch
-					if system == cnst.Suse && !strings.Contains(path, g.config.Arch) {
-						return nil
-					}
+			// They are bundled in the rootfs so pick them from there
+			fileContent, err := g.config.Fs.ReadFile(filepath.Join(cnst.ActiveDir, f))
 
-					fileWriteName := filepath.Join(cnst.EfiDir, fmt.Sprintf("EFI/boot/%s", f))
-
-					g.config.Logger.Debugf("Copying %s to %s", path, fileWriteName)
-
-					fileContent, err := g.config.Fs.ReadFile(path)
-					if err != nil {
-						return fmt.Errorf("error reading %s: %s", path, err)
-					}
-					err = g.config.Fs.WriteFile(fileWriteName, fileContent, cnst.FilePerm)
-					if err != nil {
-						return fmt.Errorf("error writing %s: %s", fileWriteName, err)
-					}
-					foundEfi = true
-					return nil
-				}
-				return err
-			})
-			if !foundEfi {
-				return fmt.Errorf("did not find efi artifacts under %s", rootDir)
+			if err != nil {
+				return fmt.Errorf("error reading %s: %s", filepath.Join(cnst.ActiveDir, f), err)
+			}
+			err = g.config.Fs.WriteFile(fileWriteName, fileContent, cnst.FilePerm)
+			if err != nil {
+				return fmt.Errorf("error writing %s: %s", fileWriteName, err)
 			}
 		}
 
 		// Rename the shimName to the fallback name so the system boots from fallback. This means that we do not create
 		// any bootloader entries, so our recent installation has the lower priority if something else is on the bootloader
-		var writeShim string
+		writeShim := cnst.GetFallBackEfi(g.config.Arch)
 
-		switch g.config.Arch {
-		case cnst.ArchArm64:
-			writeShim = "bootaa64.efi"
-		default:
-			writeShim = "bootx64.efi"
-
-		}
-
-		readShim, err := g.config.Fs.ReadFile(filepath.Join(cnst.EfiDir, "EFI/boot/", shimName))
+		readShim, err := g.config.Fs.ReadFile(filepath.Join(cnst.EfiDir, "EFI/boot/", cnst.SignedShim))
 		if err != nil {
-			return fmt.Errorf("could not read shim file %s at dir %s", shimName, cnst.EfiDir)
+			return fmt.Errorf("could not read shim file %s at dir %s", cnst.SignedShim, cnst.EfiDir)
 		}
 
 		err = g.config.Fs.WriteFile(filepath.Join(cnst.EfiDir, "EFI/boot/", writeShim), readShim, cnst.FilePerm)
 		if err != nil {
-			return fmt.Errorf("could nto write shim file %s at dir %s", shimName, cnst.EfiDir)
+			return fmt.Errorf("could not write shim file %s at dir %s", writeShim, cnst.EfiDir)
 		}
 
 		// Add grub.cfg in EFI that chainloads the grub.cfg in recovery
