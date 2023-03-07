@@ -123,13 +123,10 @@ const (
 	// Eject script
 	EjectScript = "#!/bin/sh\n/usr/bin/eject -rmF"
 
-	ArchAmd64 = "amd64"
-	Archx86   = "x86_64"
-	ArchArm64 = "arm64"
-
-	Fedora = "fedora"
-	Ubuntu = "ubuntu"
-	Suse   = "suse"
+	ArchAmd64  = "amd64"
+	Archx86    = "x86_64"
+	ArchArm64  = "arm64"
+	SignedShim = "shim-susesigned.efi"
 )
 
 func GetCloudInitPaths() []string {
@@ -252,4 +249,27 @@ func GetISOKeyEnvMap() map[string]string {
 func GetDiskKeyEnvMap() map[string]string {
 	// None for the time being
 	return map[string]string{}
+}
+
+func GetGrubFilePaths(arch string) []string {
+	var archPath string
+	switch arch {
+	case ArchArm64:
+		archPath = "aarch64"
+	default:
+		archPath = Archx86
+	}
+	return []string{
+		fmt.Sprintf("/usr/share/efi/%s/grub.efi", archPath),
+		fmt.Sprintf("/usr/share/efi/%s/%s", archPath, SignedShim),
+	}
+}
+
+func GetFallBackEfi(arch string) string {
+	switch arch {
+	case ArchArm64:
+		return "bootaa64.efi"
+	default:
+		return "bootx64.efi"
+	}
 }
