@@ -17,13 +17,12 @@ limitations under the License.
 package partitioner
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"regexp"
 	"strings"
 	"time"
-
-	"github.com/pkg/errors"
 
 	v1 "github.com/rancher/elemental-cli/pkg/types/v1"
 	"github.com/rancher/elemental-cli/pkg/utils"
@@ -120,7 +119,7 @@ func (dev *Disk) Reload() error {
 	pc := NewPartedCall(dev.String(), dev.runner)
 	prnt, err := pc.Print()
 	if err != nil {
-		return errors.Wrap(err, prnt)
+		return fmt.Errorf("error: %w. output: %s", err, prnt)
 	}
 
 	// if the unallocated space warning is found it is assumed GPT headers
@@ -134,12 +133,12 @@ func (dev *Disk) Reload() error {
 		// because of that we use sgdisk for that...
 		out, err := dev.runner.Run("sgdisk", "-e", dev.device)
 		if err != nil {
-			return errors.Wrap(err, string(out))
+			return fmt.Errorf("error: %w. output: %s", err, string(out))
 		}
 		// Reload disk data with fixed headers
 		prnt, err = pc.Print()
 		if err != nil {
-			return errors.Wrap(err, prnt)
+			return fmt.Errorf("error: %w. output: %s", err, prnt)
 		}
 	}
 
