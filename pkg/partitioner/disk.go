@@ -119,7 +119,7 @@ func (dev *Disk) Reload() error {
 	pc := NewPartedCall(dev.String(), dev.runner)
 	prnt, err := pc.Print()
 	if err != nil {
-		return err
+		return fmt.Errorf("error: %w. output: %s", err, prnt)
 	}
 
 	// if the unallocated space warning is found it is assumed GPT headers
@@ -131,14 +131,14 @@ func (dev *Disk) Reload() error {
 	if unallocatedRegexp.Match([]byte(prnt)) {
 		// Parted has not a proper way to doing it in non interactive mode,
 		// because of that we use sgdisk for that...
-		_, err = dev.runner.Run("sgdisk", "-e", dev.device)
+		out, err := dev.runner.Run("sgdisk", "-e", dev.device)
 		if err != nil {
-			return err
+			return fmt.Errorf("error: %w. output: %s", err, string(out))
 		}
 		// Reload disk data with fixed headers
 		prnt, err = pc.Print()
 		if err != nil {
-			return err
+			return fmt.Errorf("error: %w. output: %s", err, prnt)
 		}
 	}
 
