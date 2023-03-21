@@ -20,7 +20,6 @@ import (
 	"crypto/md5"
 	"errors"
 	"fmt"
-	"github.com/rancher/elemental-cli/pkg/utils"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -35,11 +34,11 @@ import (
 	"github.com/mudler/luet/pkg/database"
 	"github.com/mudler/luet/pkg/helpers/docker"
 	"github.com/mudler/luet/pkg/installer"
-	"github.com/twpayne/go-vfs"
-	"gopkg.in/yaml.v3"
-
 	"github.com/rancher/elemental-cli/pkg/constants"
 	v1 "github.com/rancher/elemental-cli/pkg/types/v1"
+	"github.com/rancher/elemental-cli/pkg/utils"
+	"github.com/twpayne/go-vfs"
+	"gopkg.in/yaml.v3"
 )
 
 type Luet struct {

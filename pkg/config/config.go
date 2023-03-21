@@ -18,13 +18,13 @@ package config
 
 import (
 	"fmt"
-	"github.com/rancher/elemental-cli/pkg/cloudinit"
 	"path/filepath"
 	"runtime"
 
 	"github.com/twpayne/go-vfs"
 	"k8s.io/mount-utils"
 
+	"github.com/rancher/elemental-cli/pkg/cloudinit"
 	"github.com/rancher/elemental-cli/pkg/constants"
 	"github.com/rancher/elemental-cli/pkg/http"
 	"github.com/rancher/elemental-cli/pkg/luet"
