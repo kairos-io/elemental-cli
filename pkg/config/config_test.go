@@ -17,6 +17,7 @@ limitations under the License.
 package config_test
 
 import (
+	"github.com/rancher/elemental-cli/pkg/utils"
 	"path/filepath"
 
 	"github.com/jaypipes/ghw/pkg/block"
@@ -25,7 +26,6 @@ import (
 	"github.com/rancher/elemental-cli/pkg/config"
 	"github.com/rancher/elemental-cli/pkg/constants"
 	v1 "github.com/rancher/elemental-cli/pkg/types/v1"
-	"github.com/rancher/elemental-cli/pkg/utils"
 	v1mock "github.com/rancher/elemental-cli/tests/mocks"
 	"github.com/twpayne/go-vfs/vfst"
 	"k8s.io/mount-utils"
@@ -399,28 +399,6 @@ var _ = Describe("Types", Label("types", "config"), func() {
 					Expect(spec.Recovery.Source.IsEmpty()).To(BeTrue())
 					Expect(spec.Recovery.FS).To(Equal(constants.SquashFs))
 				})
-			})
-		})
-		Describe("BuildConfig", Label("build"), func() {
-			It("initiates a new build config", func() {
-				build := config.NewBuildConfig()
-				Expect(build.Name).To(Equal(constants.BuildImgName))
-				Expect(len(build.Repos)).To(Equal(1))
-				Expect(build.Repos[0].URI).To(ContainSubstring(constants.LuetDefaultRepoURI))
-			})
-		})
-		Describe("LiveISO", Label("iso"), func() {
-			It("initiates a new LiveISO", func() {
-				iso := config.NewISO()
-				Expect(iso.Label).To(Equal(constants.ISOLabel))
-				Expect(len(iso.UEFI)).To(Equal(0))
-				Expect(len(iso.Image)).To(Equal(0))
-			})
-		})
-		Describe("RawDisk", Label("disk"), func() {
-			It("initiates a new RawDisk", func() {
-				disk := config.NewRawDisk()
-				Expect(len(disk.X86_64.Packages)).To(Equal(len(constants.GetBuildDiskDefaultPackages())))
 			})
 		})
 	})

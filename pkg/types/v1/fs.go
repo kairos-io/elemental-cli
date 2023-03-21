@@ -19,6 +19,7 @@ package v1
 import (
 	"io/fs"
 	"os"
+	"time"
 )
 
 type FS interface {
@@ -36,4 +37,12 @@ type FS interface {
 	Remove(name string) error
 	OpenFile(name string, flag int, perm fs.FileMode) (*os.File, error)
 	WriteFile(filename string, data []byte, perm os.FileMode) error
+	Chown(name string, uid, git int) error
+	Chtimes(name string, atime, mtime time.Time) error
+	Glob(pattern string) ([]string, error)
+	Lchown(name string, uid, git int) error
+	PathSeparator() rune
+	Rename(oldpath, newpath string) error
+	Symlink(oldname, newname string) error
+	Truncate(name string, size int64) error
 }

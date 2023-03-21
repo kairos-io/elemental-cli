@@ -344,17 +344,6 @@ var _ = Describe("Types", Label("types", "config"), func() {
 			Expect(cfg.Luet.GetPlugins()).To(Equal([]string{constants.LuetMtreePlugin}))
 		})
 	})
-	Describe("BuildConfig", func() {
-		It("runs sanitize method", func() {
-			cfg := config.NewBuildConfig(config.WithMounter(v1mocks.NewErrorMounter()))
-			cfg.Config.Verify = true
-
-			// Sets the luet mtree pluing
-			err := cfg.Sanitize()
-			Expect(err).ShouldNot(HaveOccurred())
-			Expect(cfg.Luet.GetPlugins()).To(Equal([]string{constants.LuetMtreePlugin}))
-		})
-	})
 	Describe("InstallSpec", func() {
 		var spec *v1.InstallSpec
 
@@ -491,48 +480,6 @@ var _ = Describe("Types", Label("types", "config"), func() {
 			spec.Partitions.Recovery = nil
 			err = spec.Sanitize()
 			Expect(err).Should(HaveOccurred())
-		})
-	})
-	Describe("LiveISO", func() {
-		It("runs sanitize method", func() {
-			iso := config.NewISO()
-			Expect(iso.Sanitize()).ShouldNot(HaveOccurred())
-
-			//Success when properly provided source packages
-			spec := &v1.LiveISO{
-				RootFS: []*v1.ImageSource{
-					v1.NewDirSrc("/system/os"),
-					v1.NewChannelSrc("system/os"),
-				},
-				UEFI: []*v1.ImageSource{
-					v1.NewChannelSrc("live/grub2-efi-image"),
-				},
-				Image: []*v1.ImageSource{
-					v1.NewChannelSrc("live/grub2"),
-				},
-			}
-			Expect(spec.Sanitize()).ShouldNot(HaveOccurred())
-			Expect(iso.Sanitize()).ShouldNot(HaveOccurred())
-
-			//Fails when packages were provided in incorrect format
-			spec = &v1.LiveISO{
-				RootFS: []*v1.ImageSource{
-					nil,
-				},
-				UEFI: []*v1.ImageSource{
-					nil,
-				},
-				Image: []*v1.ImageSource{
-					nil,
-				},
-			}
-			Expect(spec.Sanitize()).Should(HaveOccurred())
-		})
-	})
-	Describe("RawDisk", func() {
-		It("runs sanitize method", func() {
-			disk := &v1.RawDisk{}
-			Expect(disk.Sanitize()).ShouldNot(HaveOccurred())
 		})
 	})
 })

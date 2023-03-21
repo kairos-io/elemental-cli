@@ -141,12 +141,6 @@ func validateInstallUpgradeFlags(log v1.Logger, flags *pflag.FlagSet) error {
 	return nil
 }
 
-// addArchFlags adds the arch flag for build commands
-func addArchFlags(cmd *cobra.Command) {
-	archType := newEnumFlag([]string{"x86_64", "arm64"}, "x86_64")
-	cmd.Flags().VarP(archType, "arch", "a", "Arch to build the image for")
-}
-
 type enum struct {
 	Allowed []string
 	Value   string

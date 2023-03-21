@@ -98,41 +98,6 @@ func bindGivenFlags(vp *viper.Viper, flagSet *pflag.FlagSet) {
 	}
 }
 
-func ReadConfigBuild(configDir string, flags *pflag.FlagSet, mounter mount.Interface) (*v1.BuildConfig, error) {
-	logger := v1.NewLogger()
-	if configDir == "" {
-		configDir = "."
-	}
-
-	cfg := config.NewBuildConfig(
-		config.WithLogger(logger),
-		config.WithMounter(mounter),
-	)
-
-	configLogger(cfg.Logger, cfg.Fs)
-
-	viper.AddConfigPath(configDir)
-	viper.SetConfigType("yaml")
-	viper.SetConfigName("manifest.yaml")
-	// If a config file is found, read it in.
-	_ = viper.MergeInConfig()
-
-	// Bind buildconfig flags
-	bindGivenFlags(viper.GetViper(), flags)
-	// merge environment variables on top for rootCmd
-	viperReadEnv(viper.GetViper(), "BUILD", constants.GetBuildKeyEnvMap())
-
-	// unmarshal all the vars into the config object
-	err := viper.Unmarshal(cfg, setDecoder, decodeHook)
-	if err != nil {
-		cfg.Logger.Warnf("error unmarshalling config: %s", err)
-	}
-
-	err = cfg.Sanitize()
-	cfg.Logger.Debugf("Full config loaded: %s", litter.Sdump(cfg))
-	return cfg, err
-}
-
 func ReadConfigRun(configDir string, flags *pflag.FlagSet, mounter mount.Interface) (*v1.RunConfig, error) {
 	cfg := config.NewRunConfig(
 		config.WithLogger(v1.NewLogger()),
@@ -259,46 +224,6 @@ func ReadUpgradeSpec(r *v1.RunConfig, flags *pflag.FlagSet) (*v1.UpgradeSpec, er
 	err = upgrade.Sanitize()
 	r.Logger.Debugf("Loaded upgrade UpgradeSpec: %s", litter.Sdump(upgrade))
 	return upgrade, err
-}
-
-func ReadBuildISO(b *v1.BuildConfig, flags *pflag.FlagSet) (*v1.LiveISO, error) {
-	iso := config.NewISO()
-	vp := viper.Sub("iso")
-	if vp == nil {
-		vp = viper.New()
-	}
-	// Bind build-iso cmd flags
-	bindGivenFlags(vp, flags)
-	// Bind build-iso env vars
-	viperReadEnv(vp, "ISO", constants.GetISOKeyEnvMap())
-
-	err := vp.Unmarshal(iso, setDecoder, decodeHook)
-	if err != nil {
-		b.Logger.Warnf("error unmarshalling LiveISO: %s", err)
-	}
-	err = iso.Sanitize()
-	b.Logger.Debugf("Loaded LiveISO: %s", litter.Sdump(iso))
-	return iso, err
-}
-
-func ReadBuildDisk(b *v1.BuildConfig, flags *pflag.FlagSet) (*v1.RawDisk, error) {
-	disk := config.NewRawDisk()
-	vp := viper.Sub("raw_disk")
-	if vp == nil {
-		vp = viper.New()
-	}
-	// Bind build-disk cmd flags
-	bindGivenFlags(vp, flags)
-	// Bind build-disk env vars
-	viperReadEnv(vp, "RAWDISK", constants.GetDiskKeyEnvMap())
-
-	err := vp.Unmarshal(disk, setDecoder, decodeHook)
-	if err != nil {
-		b.Logger.Warnf("error unmarshalling RawDisk: %s", err)
-	}
-	err = disk.Sanitize()
-	b.Logger.Debugf("Loaded RawDisk: %s", litter.Sdump(disk))
-	return disk, err
 }
 
 func configLogger(log v1.Logger, vfs v1.FS) {

@@ -18,10 +18,8 @@ package config_test
 
 import (
 	"bytes"
-	"os"
-	"strings"
-
 	"github.com/sanity-io/litter"
+	"os"
 
 	. "github.com/rancher/elemental-cli/cmd/config"
 
@@ -72,102 +70,6 @@ var _ = Describe("Config", Label("config"), func() {
 		})
 	})
 
-	Describe("Build config", Label("build"), func() {
-		var flags *pflag.FlagSet
-		BeforeEach(func() {
-			flags = pflag.NewFlagSet("testflags", 1)
-			flags.String("arch", "", "testing flag")
-			flags.Set("arch", "arm64")
-		})
-		It("values empty if config path not valid", Label("path", "values"), func() {
-			cfg, err := ReadConfigBuild("/none/", flags, mounter)
-			Expect(err).To(BeNil())
-			Expect(viper.GetString("name")).To(Equal(""))
-			Expect(cfg.Name).To(Equal("elemental"))
-			Expect(cfg.Arch).To(Equal("arm64"))
-		})
-		It("values filled if config path valid", Label("path", "values"), func() {
-			cfg, err := ReadConfigBuild("../../tests/fixtures/config/", flags, mounter)
-			Expect(err).To(BeNil())
-			Expect(viper.GetString("name")).To(Equal("cOS-0"))
-			Expect(cfg.Name).To(Equal("cOS-0"))
-			hasSuffix := strings.HasSuffix(viper.ConfigFileUsed(), "config/manifest.yaml")
-			Expect(hasSuffix).To(BeTrue())
-		})
-
-		It("overrides values with env values", Label("env", "values"), func() {
-			_ = os.Setenv("ELEMENTAL_BUILD_NAME", "randomname")
-			cfg, err := ReadConfigBuild("../../tests/fixtures/config/", flags, mounter)
-			Expect(err).To(BeNil())
-			Expect(cfg.Name).To(Equal("randomname"))
-		})
-	})
-	Describe("Read build specs", Label("build"), func() {
-		var cfg *v1.BuildConfig
-		var runner *v1mock.FakeRunner
-		var fs vfs.FS
-		var logger v1.Logger
-		var mounter *v1mock.ErrorMounter
-		var syscall *v1mock.FakeSyscall
-		var client *v1mock.FakeHTTPClient
-		var cloudInit *v1mock.FakeCloudInitRunner
-		var cleanup func()
-		var memLog *bytes.Buffer
-		var err error
-
-		BeforeEach(func() {
-			runner = v1mock.NewFakeRunner()
-			syscall = &v1mock.FakeSyscall{}
-			mounter = v1mock.NewErrorMounter()
-			client = &v1mock.FakeHTTPClient{}
-			memLog = &bytes.Buffer{}
-			logger = v1.NewBufferLogger(memLog)
-			cloudInit = &v1mock.FakeCloudInitRunner{}
-
-			fs, cleanup, err = vfst.NewTestFS(map[string]interface{}{})
-			Expect(err).Should(BeNil())
-
-			cfg, err = ReadConfigBuild("../../tests/fixtures/config/", nil, mounter)
-			Expect(err).Should(BeNil())
-			// From defaults
-			Expect(cfg.Arch).To(Equal("x86_64"))
-
-			// From config
-			Expect(cfg.Repos[0].URI).To(ContainSubstring("registry.org/my/repo"))
-
-			cfg.Fs = fs
-			cfg.Runner = runner
-			cfg.Logger = logger
-			cfg.Mounter = mounter
-			cfg.Syscall = syscall
-			cfg.Client = client
-			cfg.CloudInitRunner = cloudInit
-		})
-		AfterEach(func() {
-			cleanup()
-		})
-
-		Describe("LiveISO spec", Label("iso"), func() {
-			It("initiates a LiveISO spec", func() {
-				iso, err := ReadBuildISO(cfg, nil)
-				Expect(err).ShouldNot(HaveOccurred())
-
-				// From config file
-				Expect(iso.Image[0].Value()).To(Equal("recovery/cos-img"))
-				Expect(iso.Label).To(Equal("LIVE_LABEL"))
-			})
-		})
-		Describe("RawDisk spec", Label("disk"), func() {
-			It("initiates a RawDisk spec", func() {
-				disk, err := ReadBuildDisk(cfg, nil)
-				Expect(err).ShouldNot(HaveOccurred())
-
-				// From config file
-				Expect(len(disk.X86_64.Packages)).To(Equal(1))
-				Expect(disk.X86_64.Packages[0].Name).To(Equal("system/myos"))
-			})
-		})
-	})
 	Describe("Run config", Label("run"), func() {
 		var flags *pflag.FlagSet
 		BeforeEach(func() {
@@ -225,7 +127,6 @@ var _ = Describe("Config", Label("config"), func() {
 		var mounter *v1mock.ErrorMounter
 		var syscall *v1mock.FakeSyscall
 		var client *v1mock.FakeHTTPClient
-		var cloudInit *v1mock.FakeCloudInitRunner
 		var cleanup func()
 		var memLog *bytes.Buffer
 		var err error
@@ -237,7 +138,6 @@ var _ = Describe("Config", Label("config"), func() {
 			client = &v1mock.FakeHTTPClient{}
 			memLog = &bytes.Buffer{}
 			logger = v1.NewBufferLogger(memLog)
-			cloudInit = &v1mock.FakeCloudInitRunner{}
 
 			fs, cleanup, err = vfst.NewTestFS(map[string]interface{}{})
 			Expect(err).Should(BeNil())
@@ -251,7 +151,6 @@ var _ = Describe("Config", Label("config"), func() {
 			cfg.Mounter = mounter
 			cfg.Syscall = syscall
 			cfg.Client = client
-			cfg.CloudInitRunner = cloudInit
 		})
 		AfterEach(func() {
 			cleanup()

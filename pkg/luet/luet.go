@@ -20,6 +20,8 @@ import (
 	"crypto/md5"
 	"errors"
 	"fmt"
+	"github.com/rancher/elemental-cli/pkg/utils"
+	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -38,7 +40,6 @@ import (
 
 	"github.com/rancher/elemental-cli/pkg/constants"
 	v1 "github.com/rancher/elemental-cli/pkg/types/v1"
-	"github.com/rancher/elemental-cli/pkg/utils"
 )
 
 type Luet struct {
@@ -211,7 +212,7 @@ func (l Luet) initLuetRepository(repo v1.Repository) (luetTypes.LuetRepository, 
 
 	repoType := repo.Type
 	if repoType == "" {
-		if exists, _ := utils.Exists(l.fs, repo.URI); exists {
+		if _, exists := l.fs.Stat(repo.URI); !os.IsNotExist(exists) {
 			repoType = "disk"
 		} else if http, _ := utils.IsHTTPURI(repo.URI); http {
 			repoType = "http"

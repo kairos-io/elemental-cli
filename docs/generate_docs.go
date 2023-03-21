@@ -29,12 +29,7 @@ func main() {
 	rootCmd := cmd.NewRootCmd()
 	for _, command := range []*cobra.Command{
 		rootCmd,
-		cmd.NewBuildDisk(rootCmd, false),
-		cmd.NewBuildISO(rootCmd, false),
-		cmd.NewCloudInitCmd(rootCmd),
-		cmd.NewConvertDisk(rootCmd, false),
 		cmd.NewInstallCmd(rootCmd, false),
-		cmd.NewPullImageCmd(rootCmd, false),
 		cmd.NewResetCmd(rootCmd, false),
 		cmd.NewRunStage(rootCmd),
 		cmd.NewUpgradeCmd(rootCmd, false),

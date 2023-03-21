@@ -460,38 +460,6 @@ type Image struct {
 	LoopDevice string
 }
 
-// LiveISO represents the configurations needed for a live ISO image
-type LiveISO struct {
-	RootFS             []*ImageSource `yaml:"rootfs,omitempty" mapstructure:"rootfs"`
-	UEFI               []*ImageSource `yaml:"uefi,omitempty" mapstructure:"uefi"`
-	Image              []*ImageSource `yaml:"image,omitempty" mapstructure:"image"`
-	Label              string         `yaml:"label,omitempty" mapstructure:"label"`
-	GrubEntry          string         `yaml:"grub-entry-name,omitempty" mapstructure:"grub-entry-name"`
-	BootloaderInRootFs bool           `yaml:"bootloader-in-rootfs" mapstructure:"bootloader-in-rootfs"`
-}
-
-// Sanitize checks the consistency of the struct, returns error
-// if unsolvable inconsistencies are found
-func (i *LiveISO) Sanitize() error {
-	for _, src := range i.RootFS {
-		if src == nil {
-			return fmt.Errorf("wrong name of source package for rootfs")
-		}
-	}
-	for _, src := range i.UEFI {
-		if src == nil {
-			return fmt.Errorf("wrong name of source package for uefi")
-		}
-	}
-	for _, src := range i.Image {
-		if src == nil {
-			return fmt.Errorf("wrong name of source package for image")
-		}
-	}
-
-	return nil
-}
-
 // Repository represents the basic configuration for a package repository
 type Repository struct {
 	Name        string `yaml:"name,omitempty" mapstructure:"name"`
@@ -500,46 +468,6 @@ type Repository struct {
 	Type        string `yaml:"type,omitempty" mapstructure:"type"`
 	Arch        string `yaml:"arch,omitempty" mapstructure:"arch"`
 	ReferenceID string `yaml:"reference,omitempty" mapstructure:"reference"`
-}
-
-// BuildConfig represents the config we need for building isos, raw images, artifacts
-type BuildConfig struct {
-	Date   bool   `yaml:"date,omitempty" mapstructure:"date"`
-	Name   string `yaml:"name,omitempty" mapstructure:"name"`
-	OutDir string `yaml:"output,omitempty" mapstructure:"output"`
-
-	// 'inline' and 'squash' labels ensure config fields
-	// are embedded from a yaml and map PoV
-	Config `yaml:",inline" mapstructure:",squash"`
-}
-
-// Sanitize checks the consistency of the struct, returns error
-// if unsolvable inconsistencies are found
-func (b *BuildConfig) Sanitize() error {
-	return b.Config.Sanitize()
-}
-
-type RawDisk struct {
-	X86_64 *RawDiskArchEntry `yaml:"x86_64,omitempty" mapstructure:"x86_64"` //nolint:revive
-	Arm64  *RawDiskArchEntry `yaml:"arm64,omitempty" mapstructure:"arm64"`
-}
-
-// Sanitize checks the consistency of the struct, returns error
-// if unsolvable inconsistencies are found
-func (d *RawDisk) Sanitize() error {
-	// No checks for the time being
-	return nil
-}
-
-// RawDiskArchEntry represents an arch entry in raw_disk
-type RawDiskArchEntry struct {
-	Packages []RawDiskPackage `yaml:"packages,omitempty"`
-}
-
-// RawDiskPackage represents a package entry for raw_disk, with a package name and a target to install to
-type RawDiskPackage struct {
-	Name   string `yaml:"name,omitempty"`
-	Target string `yaml:"target,omitempty"`
 }
 
 // InstallState tracks the installation data of the whole system

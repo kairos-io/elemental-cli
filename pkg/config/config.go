@@ -18,13 +18,13 @@ package config
 
 import (
 	"fmt"
+	"github.com/rancher/elemental-cli/pkg/cloudinit"
 	"path/filepath"
 	"runtime"
 
 	"github.com/twpayne/go-vfs"
 	"k8s.io/mount-utils"
 
-	"github.com/rancher/elemental-cli/pkg/cloudinit"
 	"github.com/rancher/elemental-cli/pkg/constants"
 	"github.com/rancher/elemental-cli/pkg/http"
 	"github.com/rancher/elemental-cli/pkg/luet"
@@ -90,13 +90,6 @@ func WithLuet(luet v1.LuetInterface) func(r *v1.Config) error {
 	}
 }
 
-func WithArch(arch string) func(r *v1.Config) error {
-	return func(r *v1.Config) error {
-		r.Arch = arch
-		return nil
-	}
-}
-
 func NewConfig(opts ...GenericOptions) *v1.Config {
 	log := v1.NewLogger()
 	arch, err := utils.GolangArchToArch(runtime.GOARCH)
@@ -157,16 +150,6 @@ func NewRunConfig(opts ...GenericOptions) *v1.RunConfig {
 		Config: *config,
 	}
 	return r
-}
-
-// CoOccurrenceConfig sets further configurations once config files and other
-// runtime configurations are read. This is mostly a method to call once the
-// mapstructure unmarshal already took place.
-func CoOccurrenceConfig(cfg *v1.Config) {
-	// Set Luet plugins, we only use the mtree plugin for now
-	if cfg.Verify {
-		cfg.Luet.SetPlugins(constants.LuetMtreePlugin)
-	}
 }
 
 // NewInstallSpec returns an InstallSpec struct all based on defaults and basic host checks (e.g. EFI vs BIOS)
@@ -467,48 +450,4 @@ func NewResetSpec(cfg v1.Config) (*v1.ResetSpec, error) {
 		},
 		State: installState,
 	}, nil
-}
-
-func NewRawDisk() *v1.RawDisk {
-	var packages []v1.RawDiskPackage
-	defaultPackages := constants.GetBuildDiskDefaultPackages()
-
-	for pkg, target := range defaultPackages {
-		packages = append(packages, v1.RawDiskPackage{Name: pkg, Target: target})
-	}
-
-	return &v1.RawDisk{
-		X86_64: &v1.RawDiskArchEntry{Packages: packages},
-		Arm64:  &v1.RawDiskArchEntry{Packages: packages},
-	}
-}
-
-func NewISO() *v1.LiveISO {
-	return &v1.LiveISO{
-		Label:     constants.ISOLabel,
-		GrubEntry: constants.GrubDefEntry,
-		UEFI:      []*v1.ImageSource{},
-		Image:     []*v1.ImageSource{},
-	}
-}
-
-func NewBuildConfig(opts ...GenericOptions) *v1.BuildConfig {
-	b := &v1.BuildConfig{
-		Config: *NewConfig(opts...),
-		Name:   constants.BuildImgName,
-	}
-	if len(b.Repos) == 0 {
-		repo := constants.LuetDefaultRepoURI
-		if b.Arch != constants.Archx86 {
-			repo = fmt.Sprintf("%s-%s", constants.LuetDefaultRepoURI, b.Arch)
-		}
-		b.Repos = []v1.Repository{{
-			Name:     "cos",
-			Type:     "docker",
-			URI:      repo,
-			Arch:     b.Arch,
-			Priority: constants.LuetDefaultRepoPrio,
-		}}
-	}
-	return b
 }
