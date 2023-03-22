@@ -23,8 +23,11 @@ import (
 	"github.com/spf13/viper"
 	"k8s.io/mount-utils"
 
+	"github.com/docker/docker/api/types"
 	"github.com/rancher/elemental-cli/cmd/config"
 	"github.com/rancher/elemental-cli/pkg/action"
+	"github.com/rancher/elemental-cli/pkg/luet"
+	"github.com/rancher/elemental-cli/pkg/utils"
 )
 
 // NewUpgradeCmd returns a new instance of the upgrade subcommand and appends it to
@@ -61,6 +64,28 @@ func NewUpgradeCmd(root *cobra.Command, addCheckRoot bool) *cobra.Command {
 			// Adapt 'docker-image' and 'directory'  deprecated flags to 'system' syntax
 			adaptDockerImageAndDirectoryFlagsToSystem(cmd.Flags())
 
+			user, _ := cmd.Flags().GetString("auth-username")
+			pass, _ := cmd.Flags().GetString("auth-password")
+			authType, _ := cmd.Flags().GetString("auth-type")
+			server, _ := cmd.Flags().GetString("auth-server-address")
+			identity, _ := cmd.Flags().GetString("auth-identity-token")
+			registryToken, _ := cmd.Flags().GetString("auth-registry-token")
+
+			auth := &types.AuthConfig{
+				Username:      user,
+				Password:      pass,
+				ServerAddress: server,
+				Auth:          authType,
+				IdentityToken: identity,
+				RegistryToken: registryToken,
+			}
+
+			// Override the default luet to pass the auth
+			// Remember to create the temp dir
+			tmpDir := utils.GetTempDir(&cfg.Config, "")
+			l := luet.NewLuet(luet.WithLogger(cfg.Logger), luet.WithAuth(auth), luet.WithLuetTempDir(tmpDir))
+			cfg.Luet = l
+
 			// Set this after parsing of the flags, so it fails on parsing and prints usage properly
 			cmd.SilenceUsage = true
 			cmd.SilenceErrors = true // Do not propagate errors down the line, we control them
@@ -80,6 +105,7 @@ func NewUpgradeCmd(root *cobra.Command, addCheckRoot bool) *cobra.Command {
 	c.Flags().Bool("recovery", false, "Upgrade the recovery")
 	addSharedInstallUpgradeFlags(c)
 	addLocalImageFlag(c)
+	addAuthFlags(c)
 	return c
 }
 
