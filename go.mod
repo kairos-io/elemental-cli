@@ -41,5 +41,5 @@ require (
 	golang.org/x/crypto v0.5.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/mount-utils v0.23.0
+	k8s.io/mount-utils v0.26.3
 )
