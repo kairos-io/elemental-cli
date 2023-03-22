@@ -24,15 +24,15 @@ import (
 
 // ErrorMounter is a fake mounter for tests that can error out.
 type ErrorMounter struct {
+	mount.Interface
 	ErrorOnMount   bool
 	ErrorOnUnmount bool
-	FakeMounter    mount.Interface
 }
 
 // NewErrorMounter returns an ErrorMounter with an instance of FakeMounter inside so we can use its functions
 func NewErrorMounter() *ErrorMounter {
 	return &ErrorMounter{
-		FakeMounter: &mount.FakeMounter{},
+		Interface: &mount.FakeMounter{},
 	}
 }
 
@@ -41,7 +41,7 @@ func (e ErrorMounter) Mount(source string, target string, fstype string, options
 	if e.ErrorOnMount {
 		return errors.New("mount error")
 	}
-	return e.FakeMounter.Mount(source, target, fstype, options)
+	return e.Interface.Mount(source, target, fstype, options)
 }
 
 // Unmount will return an error if ErrorOnUnmount is true
@@ -49,11 +49,11 @@ func (e ErrorMounter) Unmount(target string) error {
 	if e.ErrorOnUnmount {
 		return errors.New("unmount error")
 	}
-	return e.FakeMounter.Unmount(target)
+	return e.Interface.Unmount(target)
 }
 
 func (e ErrorMounter) List() ([]mount.MountPoint, error) {
-	return e.FakeMounter.List()
+	return e.Interface.List()
 }
 
 func (e ErrorMounter) IsLikelyNotMountPoint(file string) (bool, error) {
