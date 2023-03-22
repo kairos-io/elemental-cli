@@ -1,4 +1,4 @@
 .vscode/
 bin/
-coverage.txt
+coverage.out
 dist/
