@@ -50,8 +50,8 @@ build:
     ARG GIT_COMMIT=$(cat GIT_COMMIT)
     ARG GIT_TAG=$(cat GIT_TAG)
     ARG LDFLAGS="-s -w -X 'github.com/rancher/elemental-cli/internal/version.version=${GIT_TAG}' -X 'github.com/rancher/elemental-cli/internal/version.gitCommit=${GIT_COMMIT}'"
-    RUN go build -o elemental-cli -ldflags "${LDFLAGS}"
-    SAVE ARTIFACT elemental-cli elemental-cli AS LOCAL bin/elemental-cli
+    RUN go build -o elemental -ldflags "${LDFLAGS}"
+    SAVE ARTIFACT elemental elemental AS LOCAL bin/elemental
 
 lint:
     ARG GOLINT_VERSION
