@@ -155,7 +155,7 @@ func CreateDirStructure(fs v1.FS, target string) error {
 }
 
 // SyncData rsync's source folder contents to a target folder content,
-// both are expected to exist before hand.
+// both are expected to exist beforehand.
 func SyncData(log v1.Logger, fs v1.FS, source string, target string, excludes ...string) error {
 	if fs != nil {
 		if s, err := fs.RawPath(source); err == nil {
