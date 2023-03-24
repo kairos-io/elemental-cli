@@ -31,10 +31,6 @@ test:
     RUN apk add rsync gcc musl-dev docker jq
     WORKDIR /build
     COPY . .
-    COPY +version/GIT_COMMIT ./
-    COPY +version/GIT_TAG ./
-    ARG GIT_COMMIT=$(cat GIT_COMMIT)
-    ARG GIT_TAG=$(cat GIT_TAG)
     ARG TEST_PATHS=./...
     ARG LABEL_FILTER=
     ENV CGO_ENABLED=1
@@ -49,9 +45,13 @@ build:
     WORKDIR /build
     COPY . .
     ENV CGO_ENABLED=0
+    COPY +version/GIT_COMMIT ./
+    COPY +version/GIT_TAG ./
+    ARG GIT_COMMIT=$(cat GIT_COMMIT)
+    ARG GIT_TAG=$(cat GIT_TAG)
     ARG LDFLAGS="-s -w -X 'github.com/rancher/elemental-cli/internal/version.version=${GIT_TAG}' -X 'github.com/rancher/elemental-cli/internal/version.gitCommit=${GIT_COMMIT}'"
-    RUN go build -o elemental-cli -ldflags "${LDFLAGS}"
-    SAVE ARTIFACT elemental-cli elemental-cli AS LOCAL bin/elemental-cli
+    RUN go build -o elemental -ldflags "${LDFLAGS}"
+    SAVE ARTIFACT elemental elemental AS LOCAL bin/elemental
 
 lint:
     ARG GOLINT_VERSION
