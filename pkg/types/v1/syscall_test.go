@@ -25,13 +25,6 @@ import (
 
 // unit test stolen from yip
 var _ = Describe("Syscall", Label("types", "syscall"), func() {
-	It("Calling chroot on the real syscall should fail", func() {
-		r := v1.RealSyscall{}
-		err := r.Chroot("/tmp/")
-		// We need elevated privs to chroot so this should fail
-		Expect(err).ToNot(BeNil())
-	})
-
 	It("Calling chroot on the fake syscall should not fail", func() {
 		r := v1mock.FakeSyscall{}
 		err := r.Chroot("/tmp/")

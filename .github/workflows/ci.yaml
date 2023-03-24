@@ -10,67 +10,54 @@ concurrency:
   group: ci-${{ github.ref || github.head_ref }}
   cancel-in-progress: true
 
+env:
+  FORCE_COLOR: 1
+
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
+      - uses: earthly/actions/setup-earthly@v1
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Install Go
-        uses: actions/setup-go@v3
         with:
-          go-version: 1.18.x
+          fetch-depth: 0
       - name: Analysis
-        uses: golangci/golangci-lint-action@v3
-        with:
-          only-new-issues: true
-          args: -v
+        run: earthly -P +all-lint
   docs_build:
     runs-on: ubuntu-latest
     steps:
+      - uses: earthly/actions/setup-earthly@v1
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Install Go
-        uses: actions/setup-go@v3
         with:
-          go-version: 1.18.x
+          fetch-depth: 0
       - name: Build
-        run: make build_docs
+        run: earthly -P +docs
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: earthly/actions/setup-earthly@v1
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Install Go
-        uses: actions/setup-go@v3
         with:
-          go-version: 1.18.x
+          fetch-depth: 0
       - name: Build
-        run: make build
+        run: earthly -P +build
+      - name: Show version
+        run: bin/elemental-cli version
   test:
     runs-on: ubuntu-latest
     needs:
       - build
     steps:
+      - uses: earthly/actions/setup-earthly@v1
       - name: Checkout code
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Install Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: '^1.18'
-      - name: Deps
-        run: make test_deps
       - name: Run tests
-        run: |
-          make test
-          sudo env PATH="$PATH" make test_root
-      - name: Merge coverage
-        run: |
-          echo "mode: atomic" > coverage.out
-          grep -v "mode: atomic" coverage.txt >> coverage.out
-          grep -v "mode: atomic" coverage_root.txt >> coverage.out
+        run: earthly -P +test
       - name: Codecov
         uses: codecov/codecov-action@v3
         with:
