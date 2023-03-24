@@ -17,7 +17,7 @@ require (
 	github.com/jaypipes/ghw v0.10.0
 	github.com/joho/godotenv v1.4.0
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/mudler/go-pluggable v0.0.0-20220716112424-189d463e3ff3
+	github.com/mudler/go-pluggable v0.0.0-20230126220627-7710299a0ae5
 	github.com/mudler/luet v0.0.0-20230312151051-5190a5126dd5
 	github.com/mudler/yip v0.11.5-0.20230124143654-91e88dfb6648
 	github.com/onsi/ginkgo/v2 v2.9.1
@@ -131,7 +131,7 @@ require (
 	github.com/mudler/topsort v0.0.0-20201103161459-db5c7901c290 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.3-0.20211202183452-c5a74bcca799 // indirect
-	github.com/opencontainers/runc v1.1.1 // indirect
+	github.com/opencontainers/runc v1.1.2 // indirect
 	github.com/otiai10/copy v1.2.1-0.20200916181228-26f84a0b1578 // indirect
 	github.com/packethost/packngo v0.29.0 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
