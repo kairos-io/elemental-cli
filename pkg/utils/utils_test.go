@@ -955,7 +955,8 @@ var _ = Describe("Utils", Label("utils"), func() {
 		})
 
 		It("returns error if it cant unmarshall the env file", func() {
-			err := fs.WriteFile("/etc/envfile", []byte("WHATWHAT"), constants.FilePerm)
+			// Cant parse weird chars, only [A-Za-z0-9_.]
+			err := fs.WriteFile("/etc/envfile", []byte("ñ = ÇÇ"), constants.FilePerm)
 			Expect(err).ToNot(HaveOccurred())
 			_, err = utils.LoadEnvFile(fs, "/etc/envfile")
 			Expect(err).To(HaveOccurred())
