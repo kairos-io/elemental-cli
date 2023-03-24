@@ -14,7 +14,7 @@ require (
 	github.com/docker/docker v20.10.23+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/jaypipes/ghw v0.9.1-0.20221223161525-77ab5ed48ca8
+	github.com/jaypipes/ghw v0.10.0
 	github.com/joho/godotenv v1.4.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/mudler/go-pluggable v0.0.0-20220716112424-189d463e3ff3
