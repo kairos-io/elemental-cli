@@ -942,11 +942,12 @@ var _ = Describe("Utils", Label("utils"), func() {
 			fs.Mkdir("/etc", constants.DirPerm)
 		})
 		It("returns proper map if file exists", func() {
-			err := fs.WriteFile("/etc/envfile", []byte("TESTKEY=TESTVALUE"), constants.FilePerm)
+			err := fs.WriteFile("/etc/envfile", []byte("TESTKEY=TESTVALUE\nTESTKEY2=TESTVALUE2\n"), constants.FilePerm)
 			Expect(err).ToNot(HaveOccurred())
 			envData, err := utils.LoadEnvFile(fs, "/etc/envfile")
 			Expect(err).ToNot(HaveOccurred())
 			Expect(envData).To(HaveKeyWithValue("TESTKEY", "TESTVALUE"))
+			Expect(envData).To(HaveKeyWithValue("TESTKEY2", "TESTVALUE2"))
 		})
 		It("returns error if file doesnt exist", func() {
 			_, err := utils.LoadEnvFile(fs, "/etc/envfile")
@@ -954,7 +955,8 @@ var _ = Describe("Utils", Label("utils"), func() {
 		})
 
 		It("returns error if it cant unmarshall the env file", func() {
-			err := fs.WriteFile("/etc/envfile", []byte("WHATWHAT"), constants.FilePerm)
+			// Cant parse weird chars, only [A-Za-z0-9_.]
+			err := fs.WriteFile("/etc/envfile", []byte("ñ = ÇÇ"), constants.FilePerm)
 			Expect(err).ToNot(HaveOccurred())
 			_, err = utils.LoadEnvFile(fs, "/etc/envfile")
 			Expect(err).To(HaveOccurred())
