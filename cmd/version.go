@@ -35,9 +35,9 @@ func NewVersionCmd(root *cobra.Command) *cobra.Command {
 				commit = v.GitCommit[:7]
 			}
 			if cmd.Flag("long").Changed {
-				fmt.Printf("%#v", v)
+				fmt.Printf("%#v\n", v)
 			} else {
-				fmt.Printf("%s+g%s", v.Version, commit)
+				fmt.Printf("%s\n", v.Version)
 			}
 
 			return nil

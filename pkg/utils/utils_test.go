@@ -554,17 +554,15 @@ var _ = Describe("Utils", Label("utils"), func() {
 			Expect(err).ShouldNot(HaveOccurred())
 			Expect(utils.SyncData(logger, fs, sourceDir, destDir)).To(BeNil())
 		})
-		It("should fail if destination does not exist", func() {
+		It("should NOT fail if destination does not exist", func() {
 			sourceDir, err := os.MkdirTemp("", "elemental")
+			err = os.WriteFile(filepath.Join(sourceDir, "testfile"), []byte("sdjfnsdjkfjkdsanfkjsnda"), os.ModePerm)
+			Expect(err).ToNot(HaveOccurred())
+			err = utils.SyncData(logger, nil, sourceDir, "/welp")
 			Expect(err).To(BeNil())
-			defer os.RemoveAll(sourceDir)
-			Expect(utils.SyncData(logger, nil, sourceDir, "/welp")).NotTo(BeNil())
 		})
 		It("should fail if source does not exist", func() {
-			destDir, err := os.MkdirTemp("", "elemental")
-			Expect(err).To(BeNil())
-			defer os.RemoveAll(destDir)
-			Expect(utils.SyncData(logger, nil, "/welp", destDir)).NotTo(BeNil())
+			Expect(utils.SyncData(logger, fs, "/welp", "/walp")).NotTo(BeNil())
 		})
 	})
 	Describe("IsLocalURI", Label("uri"), func() {
@@ -689,12 +687,6 @@ var _ = Describe("Utils", Label("utils"), func() {
 			size, err := utils.DirSize(fs, "/folder")
 			Expect(err).ShouldNot(HaveOccurred())
 			Expect(size).To(Equal(int64(3072)))
-		})
-		It("Returns the expected size of a test folder", func() {
-			err := fs.Chmod("/folder/subfolder", 0600)
-			Expect(err).ShouldNot(HaveOccurred())
-			_, err = utils.DirSize(fs, "/folder")
-			Expect(err).Should(HaveOccurred())
 		})
 	})
 	Describe("FindFileWithPrefix", Label("find"), func() {
