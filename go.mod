@@ -18,7 +18,7 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/mudler/go-pluggable v0.0.0-20220716112424-189d463e3ff3
-	github.com/mudler/luet v0.0.0-20230117111542-5d3751888844
+	github.com/mudler/luet v0.0.0-20230312151051-5190a5126dd5
 	github.com/mudler/yip v0.11.5-0.20230124143654-91e88dfb6648
 	github.com/onsi/ginkgo/v2 v2.9.1
 	github.com/onsi/gomega v1.27.4
