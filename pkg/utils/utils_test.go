@@ -942,11 +942,12 @@ var _ = Describe("Utils", Label("utils"), func() {
 			fs.Mkdir("/etc", constants.DirPerm)
 		})
 		It("returns proper map if file exists", func() {
-			err := fs.WriteFile("/etc/envfile", []byte("TESTKEY=TESTVALUE"), constants.FilePerm)
+			err := fs.WriteFile("/etc/envfile", []byte("TESTKEY=TESTVALUE\nTESTKEY2=TESTVALUE2\n"), constants.FilePerm)
 			Expect(err).ToNot(HaveOccurred())
 			envData, err := utils.LoadEnvFile(fs, "/etc/envfile")
 			Expect(err).ToNot(HaveOccurred())
 			Expect(envData).To(HaveKeyWithValue("TESTKEY", "TESTVALUE"))
+			Expect(envData).To(HaveKeyWithValue("TESTKEY2", "TESTVALUE2"))
 		})
 		It("returns error if file doesnt exist", func() {
 			_, err := utils.LoadEnvFile(fs, "/etc/envfile")
