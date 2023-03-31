@@ -69,6 +69,13 @@ func NewYipCloudInitRunner(l v1.Logger, r v1.Runner, fs vfs.FS) *YipCloudInitRun
 }
 
 func (ci YipCloudInitRunner) Run(stage string, args ...string) error {
+	// If we simply pass the config string in args, it will be treated as such
+	// by yip. Maybe this is where we should call the collector on the original
+	// args passed to this function, contruct the merged config and pass that down
+	// to yip. In other words, skip yip's implementation which collects the sources
+	// from dirs and remote urls and use the collector's one.
+	// TODO: Check if there are other places that call out to yip's implementation
+	// somehow.
 	return ci.exec.Run(stage, ci.fs, ci.console, args...)
 }
 

@@ -21,6 +21,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/go-multierror"
+	"github.com/kairos-io/kairos/pkg/config/collector"
 	"github.com/mudler/yip/pkg/schema"
 	"github.com/rancher/elemental-cli/pkg/constants"
 	v1 "github.com/rancher/elemental-cli/pkg/types/v1"
@@ -64,6 +65,22 @@ func RunStage(cfg *v1.Config, stage string, strict bool, cloudInitPaths ...strin
 	cloudInitPaths = append(constants.GetCloudInitPaths(), cloudInitPaths...)
 	cfg.Logger.Debugf("Cloud-init paths set to %v", cloudInitPaths)
 
+	o := &collector.Options{}
+	if err := o.Apply(collector.Directories(cloudInitPaths...), collector.MergeBootLine, collector.NoLogs); err != nil {
+		return err
+	}
+
+	c, err := collector.Scan(o)
+	if err != nil {
+		return err
+	}
+	configStr, err := c.String()
+	if err != nil {
+		return err
+	}
+
+	// TODO: Why are we making sure the directories exist? Aren't we supposed to
+	// read configuration from them?
 	// Make sure cloud init path specified are existing in the system
 	for _, cp := range cloudInitPaths {
 		err := MkdirAll(cfg.Fs, cp, constants.DirPerm)
@@ -81,6 +98,8 @@ func RunStage(cfg *v1.Config, stage string, strict bool, cloudInitPaths ...strin
 		allErrors = multierror.Append(allErrors, err)
 	}
 
+	// TODO: Unmarshal the config to an elemental-cli config struct? It should include
+	// this setting `cos.setup`.
 	cmdLine := strings.Split(string(cmdLineOut), " ")
 	for _, line := range cmdLine {
 		if strings.Contains(line, "=") {
@@ -100,6 +119,9 @@ func RunStage(cfg *v1.Config, stage string, strict bool, cloudInitPaths ...strin
 		}
 	}
 
+	// TODO: Run again? We can read cmdLineYipURI from the config we construct above
+	// given it includes the cmdline options.
+	//
 	// Run the stages if cmdline contains the cos.setup stanza
 	if cmdLineYipURI != "" {
 		cmdLineArgs := []string{cmdLineYipURI}
