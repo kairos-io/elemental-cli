@@ -30,7 +30,6 @@ import (
 	"github.com/jaypipes/ghw/pkg/block"
 
 	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
 	conf "github.com/rancher/elemental-cli/pkg/config"
 	"github.com/rancher/elemental-cli/pkg/constants"
 	v1 "github.com/rancher/elemental-cli/pkg/types/v1"
@@ -810,7 +809,7 @@ var _ = Describe("Utils", Label("utils"), func() {
 				Expect(err).ShouldNot(HaveOccurred())
 				err = utils.MkdirAll(fs, filepath.Join(rootDir, "/etc/"), constants.DirPerm)
 				Expect(err).ShouldNot(HaveOccurred())
-				err = fs.WriteFile(filepath.Join(rootDir, "/etc/os-release"), []byte("ID=\"suse\""), constants.FilePerm)
+				err = fs.WriteFile(filepath.Join(rootDir, "/etc/os-release"), []byte("KAIROS_ID=\"suse\""), constants.FilePerm)
 				Expect(err).ShouldNot(HaveOccurred())
 				grub := utils.NewGrub(config)
 				err = grub.Install(target, rootDir, bootDir, constants.GrubConf, "", true, "")
@@ -843,7 +842,7 @@ var _ = Describe("Utils", Label("utils"), func() {
 				Expect(err).ShouldNot(HaveOccurred())
 				err = fs.WriteFile(filepath.Join(rootDir, "/x86_64/loopback.mod"), []byte(""), constants.FilePerm)
 				Expect(err).ShouldNot(HaveOccurred())
-				err = fs.WriteFile(filepath.Join(rootDir, "/etc/os-release"), []byte("ID=\"suse\""), constants.FilePerm)
+				err = fs.WriteFile(filepath.Join(rootDir, "/etc/os-release"), []byte("KAIROS_ID=\"suse\""), constants.FilePerm)
 				Expect(err).ShouldNot(HaveOccurred())
 				grub := utils.NewGrub(config)
 				err = grub.Install(target, rootDir, bootDir, constants.GrubConf, "", true, "")
