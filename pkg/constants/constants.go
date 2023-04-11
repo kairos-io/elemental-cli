@@ -126,7 +126,7 @@ const (
 	ArchAmd64  = "amd64"
 	Archx86    = "x86_64"
 	ArchArm64  = "arm64"
-	SignedShim = "shim-susesigned.efi"
+	SignedShim = "shim.efi"
 )
 
 func GetCloudInitPaths() []string {
