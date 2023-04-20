@@ -21,7 +21,7 @@ require (
 	github.com/mudler/luet v0.0.0-20230312151051-5190a5126dd5
 	github.com/mudler/yip v0.11.5-0.20230124143654-91e88dfb6648
 	github.com/onsi/ginkgo/v2 v2.9.2
-	github.com/onsi/gomega v1.27.5
+	github.com/onsi/gomega v1.27.6
 	github.com/sanity-io/litter v1.5.5
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1

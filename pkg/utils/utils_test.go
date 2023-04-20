@@ -30,6 +30,8 @@ import (
 	"github.com/jaypipes/ghw/pkg/block"
 
 	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
+
 	conf "github.com/rancher/elemental-cli/pkg/config"
 	"github.com/rancher/elemental-cli/pkg/constants"
 	v1 "github.com/rancher/elemental-cli/pkg/types/v1"
