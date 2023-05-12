@@ -40,11 +40,12 @@ func NewRunStage(root *cobra.Command) *cobra.Command {
 				cfg.Logger.Errorf("Error reading config: %s\n", err)
 			}
 
-			return utils.RunStage(&cfg.Config, args[0], cfg.Strict)
+			return utils.RunStage(&cfg.Config, args[0], cfg.Strict, cfg.CloudInitPaths...)
 		},
 	}
 	root.AddCommand(c)
 	c.Flags().Bool("strict", false, "Set strict checking for errors, i.e. fail if errors were found")
+	c.Flags().StringArray("cloud-init-paths", []string{}, "Additional paths for look for cloud-init files")
 	return c
 }
 
