@@ -11,7 +11,7 @@ replace github.com/go-git/go-git/v5 => github.com/go-git/go-git/v5 v5.4.2
 require (
 	github.com/cavaliergopher/grab/v3 v3.0.1
 	github.com/distribution/distribution v2.8.1+incompatible
-	github.com/docker/docker v20.10.23+incompatible
+	github.com/docker/docker v20.10.24+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/jaypipes/ghw v0.10.0
