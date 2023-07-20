@@ -30,7 +30,7 @@ require (
 	github.com/twpayne/go-vfs v1.7.2
 	github.com/zloylos/grsync v1.6.1
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/mount-utils v0.26.3
+	k8s.io/mount-utils v0.27.4
 )
 
 require (
@@ -189,8 +189,8 @@ require (
 	gopkg.in/yaml.v1 v1.0.0-20140924161607-9f9df34309c0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	howett.net/plist v1.0.0 // indirect
-	k8s.io/klog/v2 v2.80.1 // indirect
-	k8s.io/utils v0.0.0-20221107191617-1a15be271d1d // indirect
+	k8s.io/klog/v2 v2.90.1 // indirect
+	k8s.io/utils v0.0.0-20230209194617-a36077c30491 // indirect
 	pault.ag/go/modprobe v0.1.2 // indirect
 	pault.ag/go/topsort v0.1.1 // indirect
 )
